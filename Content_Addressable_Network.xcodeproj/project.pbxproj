@@ -7,7 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AC2FA7F11EB7F3C9002DDEB8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA7F01EB7F3C9002DDEB8 /* main.cpp */; };
+		AC2FA80C1EB7F532002DDEB8 /* libboost_system-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AC2FA80A1EB7F532002DDEB8 /* libboost_system-mt.dylib */; };
+		AC2FA80D1EB7F532002DDEB8 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = AC2FA80B1EB7F532002DDEB8 /* libboost_thread-mt.dylib */; };
+		AC2FA81C1EB7F616002DDEB8 /* Member.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8111EB7F616002DDEB8 /* Member.cpp */; };
+		AC2FA81D1EB7F616002DDEB8 /* Node.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8131EB7F616002DDEB8 /* Node.cpp */; };
+		AC2FA81E1EB7F616002DDEB8 /* Server_Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8171EB7F616002DDEB8 /* Server_Session.cpp */; };
+		AC2FA81F1EB7F616002DDEB8 /* Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8191EB7F616002DDEB8 /* Server.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +29,22 @@
 
 /* Begin PBXFileReference section */
 		AC2FA7ED1EB7F3C9002DDEB8 /* Content_Addressable_Network */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Content_Addressable_Network; sourceTree = BUILT_PRODUCTS_DIR; };
-		AC2FA7F01EB7F3C9002DDEB8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		AC2FA80A1EB7F532002DDEB8 /* libboost_system-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_system-mt.dylib"; path = "../../../../opt/local/lib/libboost_system-mt.dylib"; sourceTree = "<group>"; };
+		AC2FA80B1EB7F532002DDEB8 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../opt/local/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
+		AC2FA80E1EB7F616002DDEB8 /* Client.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Client.hpp; sourceTree = "<group>"; };
+		AC2FA80F1EB7F616002DDEB8 /* Coordinate.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Coordinate.hpp; sourceTree = "<group>"; };
+		AC2FA8101EB7F616002DDEB8 /* Generator.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Generator.hpp; sourceTree = "<group>"; };
+		AC2FA8111EB7F616002DDEB8 /* Member.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Member.cpp; sourceTree = "<group>"; };
+		AC2FA8121EB7F616002DDEB8 /* Member.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Member.hpp; sourceTree = "<group>"; };
+		AC2FA8131EB7F616002DDEB8 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Node.cpp; sourceTree = "<group>"; };
+		AC2FA8141EB7F616002DDEB8 /* Node.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Node.hpp; sourceTree = "<group>"; };
+		AC2FA8151EB7F616002DDEB8 /* Operation.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Operation.hpp; sourceTree = "<group>"; };
+		AC2FA8161EB7F616002DDEB8 /* Queue.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Queue.hpp; sourceTree = "<group>"; };
+		AC2FA8171EB7F616002DDEB8 /* Server_Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Server_Session.cpp; sourceTree = "<group>"; };
+		AC2FA8181EB7F616002DDEB8 /* Server_Session.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Server_Session.hpp; sourceTree = "<group>"; };
+		AC2FA8191EB7F616002DDEB8 /* Server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Server.cpp; sourceTree = "<group>"; };
+		AC2FA81A1EB7F616002DDEB8 /* Server.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Server.hpp; sourceTree = "<group>"; };
+		AC2FA81B1EB7F616002DDEB8 /* Zone.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Zone.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +52,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AC2FA80C1EB7F532002DDEB8 /* libboost_system-mt.dylib in Frameworks */,
+				AC2FA80D1EB7F532002DDEB8 /* libboost_thread-mt.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -41,6 +63,8 @@
 		AC2FA7E41EB7F3C9002DDEB8 = {
 			isa = PBXGroup;
 			children = (
+				AC2FA80A1EB7F532002DDEB8 /* libboost_system-mt.dylib */,
+				AC2FA80B1EB7F532002DDEB8 /* libboost_thread-mt.dylib */,
 				AC2FA7EF1EB7F3C9002DDEB8 /* Content_Addressable_Network */,
 				AC2FA7EE1EB7F3C9002DDEB8 /* Products */,
 			);
@@ -57,7 +81,20 @@
 		AC2FA7EF1EB7F3C9002DDEB8 /* Content_Addressable_Network */ = {
 			isa = PBXGroup;
 			children = (
-				AC2FA7F01EB7F3C9002DDEB8 /* main.cpp */,
+				AC2FA80E1EB7F616002DDEB8 /* Client.hpp */,
+				AC2FA80F1EB7F616002DDEB8 /* Coordinate.hpp */,
+				AC2FA8101EB7F616002DDEB8 /* Generator.hpp */,
+				AC2FA8111EB7F616002DDEB8 /* Member.cpp */,
+				AC2FA8121EB7F616002DDEB8 /* Member.hpp */,
+				AC2FA8131EB7F616002DDEB8 /* Node.cpp */,
+				AC2FA8141EB7F616002DDEB8 /* Node.hpp */,
+				AC2FA8151EB7F616002DDEB8 /* Operation.hpp */,
+				AC2FA8161EB7F616002DDEB8 /* Queue.hpp */,
+				AC2FA8171EB7F616002DDEB8 /* Server_Session.cpp */,
+				AC2FA8181EB7F616002DDEB8 /* Server_Session.hpp */,
+				AC2FA8191EB7F616002DDEB8 /* Server.cpp */,
+				AC2FA81A1EB7F616002DDEB8 /* Server.hpp */,
+				AC2FA81B1EB7F616002DDEB8 /* Zone.hpp */,
 			);
 			path = Content_Addressable_Network;
 			sourceTree = "<group>";
@@ -119,7 +156,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC2FA7F11EB7F3C9002DDEB8 /* main.cpp in Sources */,
+				AC2FA81C1EB7F616002DDEB8 /* Member.cpp in Sources */,
+				AC2FA81E1EB7F616002DDEB8 /* Server_Session.cpp in Sources */,
+				AC2FA81F1EB7F616002DDEB8 /* Server.cpp in Sources */,
+				AC2FA81D1EB7F616002DDEB8 /* Node.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -218,6 +258,11 @@
 		AC2FA7F51EB7F3C9002DDEB8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include/;
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib/,
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -225,6 +270,11 @@
 		AC2FA7F61EB7F3C9002DDEB8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /opt/local/include/;
+				LIBRARY_SEARCH_PATHS = (
+					/opt/local/lib/,
+					/opt/local/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
