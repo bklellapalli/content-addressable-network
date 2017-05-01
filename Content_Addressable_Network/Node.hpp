@@ -1,7 +1,7 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-#include "server.hpp"
+#include "Server.hpp"
 #include "Member.hpp"
 #include <boost/asio.hpp>
 #include <iostream>

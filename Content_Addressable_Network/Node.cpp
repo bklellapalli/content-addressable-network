@@ -10,6 +10,11 @@
 #include <boost/thread.hpp>
 #include <cstdlib>
 
+void Node::getMessages()
+{
+
+}
+
 void Node::init_mem_protocol(void)
 {
     while(true)
