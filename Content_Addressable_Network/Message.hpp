@@ -17,6 +17,9 @@ enum MsgTypes
     DUMMYLASTMSGTYPE
 };
 
+/* STRUCT NAME: MessageHdr
+ *
+ * DESCRIPTION: Header and content of a message */
 typedef struct MessageHdr
 {
     enum MsgTypes msgType;

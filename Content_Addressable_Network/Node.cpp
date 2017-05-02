@@ -35,6 +35,7 @@ void Node::getMessages()
                 //    (*it_beg).port, (*it_beg).heartbeat, (*it_beg).timestamp);
             }
             break;
+        default: break;
     }
 }
 

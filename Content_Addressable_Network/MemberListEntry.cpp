@@ -7,7 +7,7 @@
 //
 
 /**********************************
- * FILE NAME: Member.cpp
+ * FILE NAME: MemberListEntry.cpp
  *
  * DESCRIPTION: Definition of all Member related class
  **********************************/

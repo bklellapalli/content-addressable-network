@@ -1,3 +1,10 @@
+//
+//  Node.hpp
+//  Content_Addressable_Network
+//
+//  Created by Shriram Joshi on 5/1/17
+//  Copyright © 2017 Balakrishna. All rights reserved.
+
 #ifndef NODE_HPP
 #define NODE_HPP
 
@@ -5,10 +12,6 @@
 #include "Member.hpp"
 #include <boost/asio.hpp>
 #include <iostream>
- 
- /* STRUCT NAME: MessageHdr
- *
- * DESCRIPTION: Header and content of a message */
 
 class Node : public Member
 {
