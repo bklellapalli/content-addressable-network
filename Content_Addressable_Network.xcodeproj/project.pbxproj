@@ -12,6 +12,7 @@
 		AC2FA81E1EB7F616002DDEB8 /* Server_Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8171EB7F616002DDEB8 /* Server_Session.cpp */; };
 		AC2FA81F1EB7F616002DDEB8 /* Server.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC2FA8191EB7F616002DDEB8 /* Server.cpp */; };
 		AC36E3C11EB81AD40037E3DB /* Member.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC36E3C01EB81AD40037E3DB /* Member.cpp */; };
+		AC36E3C31EB88C8F0037E3DB /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC36E3C21EB88C8F0037E3DB /* Client.cpp */; };
 		ACE604081EB801DF00453D2D /* libboost_system-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE604061EB801DF00453D2D /* libboost_system-mt.dylib */; };
 		ACE604091EB801DF00453D2D /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ACE604071EB801DF00453D2D /* libboost_thread-mt.dylib */; };
 /* End PBXBuildFile section */
@@ -47,6 +48,7 @@
 		AC36E3BE1EB816F70037E3DB /* Message.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Message.hpp; sourceTree = "<group>"; };
 		AC36E3BF1EB819B90037E3DB /* MemberListEntry.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MemberListEntry.hpp; sourceTree = "<group>"; };
 		AC36E3C01EB81AD40037E3DB /* Member.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Member.cpp; sourceTree = "<group>"; };
+		AC36E3C21EB88C8F0037E3DB /* Client.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Client.cpp; sourceTree = "<group>"; };
 		ACE604061EB801DF00453D2D /* libboost_system-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_system-mt.dylib"; path = "../../../../../opt/local/lib/libboost_system-mt.dylib"; sourceTree = "<group>"; };
 		ACE604071EB801DF00453D2D /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../opt/local/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +104,7 @@
 				AC36E3BE1EB816F70037E3DB /* Message.hpp */,
 				AC36E3BF1EB819B90037E3DB /* MemberListEntry.hpp */,
 				AC36E3C01EB81AD40037E3DB /* Member.cpp */,
+				AC36E3C21EB88C8F0037E3DB /* Client.cpp */,
 			);
 			path = Content_Addressable_Network;
 			sourceTree = "<group>";
@@ -165,6 +168,7 @@
 			files = (
 				AC2FA81C1EB7F616002DDEB8 /* MemberListEntry.cpp in Sources */,
 				AC2FA81E1EB7F616002DDEB8 /* Server_Session.cpp in Sources */,
+				AC36E3C31EB88C8F0037E3DB /* Client.cpp in Sources */,
 				AC2FA81F1EB7F616002DDEB8 /* Server.cpp in Sources */,
 				AC2FA81D1EB7F616002DDEB8 /* Node.cpp in Sources */,
 				AC36E3C11EB81AD40037E3DB /* Member.cpp in Sources */,

@@ -14,7 +14,9 @@
 class Generator
 {
     public:
+    /*
         Coordinate genRandonCoordinate(std::string keyword);
+     */
 };
 
 #endif /* Generator_hpp */

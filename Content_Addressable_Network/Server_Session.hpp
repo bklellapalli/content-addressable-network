@@ -32,7 +32,6 @@ public:
 	  	Server_Session(tcp::socket socket);
 	  	~Server_Session();
 	  	void start(std::queue<q_elt>* mesQ);
-    
 };
 
 #endif /* Server_Session_hpp */

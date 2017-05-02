@@ -10,6 +10,8 @@
 
 class Coordinate
 {
+    /*
+     
     private:
         double x,y;
     
@@ -18,6 +20,7 @@ class Coordinate
         void setY(double xIn);
         double getX(void);
         double getY(void);
+     */
 };
 
 #endif /* Coordinate_hpp */

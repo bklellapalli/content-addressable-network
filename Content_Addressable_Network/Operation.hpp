@@ -14,12 +14,14 @@
 #include "Zone.hpp"
 #inlcude "Server.hpp"
 #include "Coordinate.hpp"
-class Client
+class Operation
 {
     public:
+    /*
         void splitZone(Zone z1, Zone z2);
         Zone merzeZone(Zone z1, Zone z2);
         Server routeToClosestPeer(std::map<std::string, Zone> neighbors, Coordinate coordinate);
+     */
 };
 
 #endif /* Operation_hpp */

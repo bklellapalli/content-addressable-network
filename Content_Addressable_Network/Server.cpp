@@ -26,9 +26,6 @@ void Server::run(std::queue<q_elt>* mesQ)
         acc.async_accept(socket, [this, mesQ](boost::system::error_code ec) {
             if (!ec)
             {
-                std::pair<std::string, int> p = std::make_pair(socket.remote_endpoint().address().to_string(),
-                                                               socket.remote_endpoint().port());
-                member_list.push_back(p);
                 auto s = std::make_shared<Server_Session>(std::move(socket));
                 s->start(mesQ);
             }

@@ -14,6 +14,7 @@
 
 class Zone
 {
+    /*
     private:
         Cordinate c1,c2,c3,c4;
     
@@ -23,6 +24,7 @@ class Zone
         double findClosestCoordinate(Coordinate coordinate);
         std::list<Coordinate> getAllCoordinates();
         double calculateArea();
+     */
 };
 
 #endif /* Zone_hpp */

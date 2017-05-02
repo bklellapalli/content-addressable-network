@@ -12,9 +12,10 @@
 enum MsgTypes
 {
     JOINREQ,
-    JOINREP,
-    HEARTBEAT,
-    DUMMYLASTMSGTYPE
+    VIEWREQ,
+    LEAVEREQ,
+    SENDFILE,
+    SEARCHFILE
 };
 
 /* STRUCT NAME: MessageHdr

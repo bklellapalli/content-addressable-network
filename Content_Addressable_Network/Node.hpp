@@ -22,7 +22,6 @@ class Node : public Member
         Node(boost::asio::io_service& io_service, int port);
         void getMessages();
 		void init_mem_protocol(void);	//thread
-        void performOperation();
 };
 
 #endif
