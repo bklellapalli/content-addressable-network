@@ -9,22 +9,22 @@
 #include "Server_Session.hpp"
 #include <iostream>
 
-
-
-session::session(tcp::socket socket) : socket_(std::move(socket))
+Server_Session::Server_Session(tcp::socket socket) : socket_(std::move(socket))
 {
+    
 }
 
-session::~session()
+Server_Session::~Server_Session()
 {
+    
 }
 
-void session::start(std::queue<q_elt>* mesQ)
+void Server_Session::start(std::queue<q_elt>* mesQ)
 {
     do_read(mesQ);
 }
 
-void session::do_read(std::queue<q_elt>* mesQ)
+void Server_Session::do_read(std::queue<q_elt>* mesQ)
 {
     auto self(shared_from_this());
     socket_.async_read_some(boost::asio::buffer(buf, max_length),
@@ -39,10 +39,9 @@ void session::do_read(std::queue<q_elt>* mesQ)
                             });
     //auto q_elt(buf.data(), max_length);
     //mesQ.emplace(q_elt);
-    
 }
 
-void session::do_write(std::size_t length)
+void Server_Session::do_write(std::size_t length)
 {
     
 }
