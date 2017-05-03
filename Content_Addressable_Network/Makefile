@@ -10,10 +10,12 @@ CFLAGS = -Wall -Wextra -std=c++11
 
 DLLS = -lboost_system -lboost_thread -lboost_chrono -lpthread
 
+LOG_DLLS = -DBOOST_LOG_DYN_LINK -lboost_log
+
 all: can_server
 
-can_server: server_session.o server.o memberlistentry.o member.o client.o
-	g++ server_session.o server.o memberlistentry.o member.o client.o Node.cpp -o server ${DLLS} ${CFLAGS}
+can_server: logger.o server_session.o server.o memberlistentry.o member.o client.o
+	g++ server_session.o server.o memberlistentry.o member.o client.o logger.o Node.cpp -o server ${DLLS} ${LOG_DLLS} ${CFLAGS}
 
 server_session.o: Server_Session.cpp Message.hpp
 	g++ member.o Server_Session.cpp -c -o server_session.o ${DLLS} ${CFLAGS}
@@ -29,3 +31,7 @@ member.o: Member.cpp memberlistentry.o
 	
 memberlistentry.o: MemberListEntry.cpp MemberListEntry.hpp
 	g++ MemberListEntry.cpp -c -o memberlistentry.o ${CFLAGS}
+	
+logger.o: Logger.cpp Logger.hpp
+	g++ Logger.cpp -c -o logger.o ${DLLS} ${LOG_DLLS} ${CFLAGS}
+
