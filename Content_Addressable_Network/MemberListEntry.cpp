@@ -17,20 +17,51 @@
 #include <utility>
 #include <iostream>
 
+Address::Address(const Address &anotherAddress) {
+	// strcpy(addr, anotherAddress.addr);
+	addrA = anotherAddress.addrA;
+	addrB = anotherAddress.addrB;
+	addrC = anotherAddress.addrC;
+	addrD = anotherAddress.addrD;
+	port = anotherAddress.port;
+}
+
 /**
- * Constructor
+ * Assignment operator overloading
  */
-q_elt::q_elt(void *elt, int size): elt(elt), size(size) {}
+Address& Address::operator =(const Address& anotherAddress) {
+	// strcpy(addr, anotherAddress.addr);
+	addrA = anotherAddress.addrA;
+	addrB = anotherAddress.addrB;
+	addrC = anotherAddress.addrC;
+	addrD = anotherAddress.addrD;
+	port = anotherAddress.port;
+	return *this;
+}
+
+/**
+ * Compare two Address objects
+ * Return true/non-zero if they have the same ip address and port number 
+ * Return false/zero if they are different 
+ */
+bool Address::operator ==(const Address& anotherAddress) {
+	return (addrA == anotherAddress.addrA && 
+		addrB == anotherAddress.addrB && 
+		addrC == anotherAddress.addrC && 
+		addrD == anotherAddress.addrD && 
+		port == anotherAddress.port);
+}
+
 
 /**
  * Constructor
  */
-MemberListEntry::MemberListEntry(std::string& addr, short port, long heartbeat, long timestamp): address(std::move(addr)), port(port), heartbeat(heartbeat), timestamp(timestamp) {}
+MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp) {}
 
 /**
  * Constuctor
  */
-MemberListEntry::MemberListEntry(std::string& addr, short port): address(std::move(addr)), port(port) {}
+MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) {}
 
 /**
  * Copy constructor
@@ -59,7 +90,7 @@ MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE) 
  *
  * DESCRIPTION: getter
  */
-std::string& MemberListEntry::getAddress() {
+Address& MemberListEntry::getAddress() {
     return address;
 }
 
@@ -95,7 +126,7 @@ long MemberListEntry::gettimestamp() {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::setAddress(std::string& addr) {
+void MemberListEntry::setAddress(Address& addr) {
     this->address = addr;
 }
 
@@ -122,6 +153,6 @@ void MemberListEntry::setheartbeat(long hearbeat) {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::settimestamp(long timestamp) {
+void MemberListEntry::settimestamp(long long timestamp) {
     this->timestamp = timestamp;
 }

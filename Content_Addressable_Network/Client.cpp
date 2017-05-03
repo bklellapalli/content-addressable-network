@@ -14,7 +14,7 @@
 
 using boost::asio::ip::tcp;
 
-MessageHdr* Client::constructMessage(std::string ipAddress, long port, MsgTypes type)
+/*MessageHdr* Client::constructMessage(std::string ipAddress, long port, MsgTypes type)
 {
     size_t msgsize = sizeof(MessageHdr) + sizeof(ipAddress) + sizeof(port) + 1;
     MessageHdr* msg = (MessageHdr *) malloc(msgsize * sizeof(char));
@@ -93,5 +93,5 @@ void Client::sendMessage()
                 break;
         }
     }
-}
+}*/
 
