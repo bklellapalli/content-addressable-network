@@ -1,19 +1,37 @@
+#**********************
+#*
+#* Progam Name: CAN Protocol.
+#*
+#* Current file: Makefile
+#* About this file: Build Script.
+#* 
+
+CFLAGS = -Wall -Wextra -std=c++11
+
+DLLS = -lboost_system -lboost_thread -lboost_chrono -lpthread
+
+LOG_DLLS = -DBOOST_LOG_DYN_LINK -lboost_log
+
 all: can_server
 
-can_server:
-	g++ -std=c++11 -Wall -Wextra Client.cpp Member.cpp MemberListEntry.cpp Server_Session.cpp Server.cpp Node.cpp -o server /usr/local/lib/libboost_system.a -lboost_system -lboost_thread -lboost_chrono -lpthread
+can_server: logger.o server_session.o server.o memberlistentry.o member.o client.o
+	g++ server_session.o server.o memberlistentry.o member.o client.o logger.o Node.cpp -o server ${DLLS} ${LOG_DLLS} ${CFLAGS}
 
-server_session.o:Server_Session.cpp member.o
-	g++ -std=c++11 -Wall -Wextra member.o Server_Session.cpp -o server_session.o /usr/local/lib/libboost_system.a -lboost_system -lboost_thread -lpthread
+server_session.o: Server_Session.cpp Message.hpp
+	g++ member.o Server_Session.cpp -c -o server_session.o ${DLLS} ${CFLAGS}
 
-server.o:Server.cpp
-	g++ -std=c++11 -Wall -Wextra Server.cpp -o server.o /usr/local/lib/libboost_system.a -lboost_system -lboost_thread -lpthread
+server.o: Server.hpp Server.cpp Message.hpp
+	g++ Server.cpp -c -o server.o ${DLLS} ${CFLAGS}
 
-client.o:Client.cpp
-	g++ -std=c++11 -Wall -Wextra Client.cpp -o client.o /usr/local/lib/libboost_system.a -lboost_system -lboost_thread -lpthread
+client.o: Client.hpp
+	g++ Client.cpp -c -o client.o ${BOOST_SYSTEM} ${DLLS} ${CFLAGS}
 
-member.o:Member.cpp
-	g++ -std=c++11 -Wall -Wextra memberlistentry.o Member.cpp -o member.o
+member.o: Member.cpp memberlistentry.o 
+	g++ memberlistentry.o Member.cpp -c -o member.o ${CFLAGS}
 	
-memberlistentry.o:MemberListEntry.cpp
-	g++ -std=c++11 -Wall -Wextra MemberListEntry.cpp -c -o memberlistentry.o
+memberlistentry.o: MemberListEntry.cpp MemberListEntry.hpp
+	g++ MemberListEntry.cpp -c -o memberlistentry.o ${CFLAGS}
+	
+logger.o: Logger.cpp Logger.hpp
+	g++ Logger.cpp -c -o logger.o ${DLLS} ${LOG_DLLS} ${CFLAGS}
+
