@@ -6,22 +6,23 @@
 //  Copyright © 2017 Balakrishna. All rights reserved.
 //
 
-#ifndef Operation_hpp
-#define Operation_hpp
+#ifndef OPERATION_HPP
+#define OPERATION_HPP
 
 #include <string>
 #include <map>
 #include "Zone.hpp"
 #inlcude "Server.hpp"
 #include "Coordinate.hpp"
+
 class Operation
 {
-    public:
     /*
+    public:
         void splitZone(Zone z1, Zone z2);
         Zone merzeZone(Zone z1, Zone z2);
         Server routeToClosestPeer(std::map<std::string, Zone> neighbors, Coordinate coordinate);
      */
 };
 
-#endif /* Operation_hpp */
+#endif /* OPERATION_HPP */

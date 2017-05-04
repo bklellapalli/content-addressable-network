@@ -12,12 +12,16 @@
  * DESCRIPTION: Definition of all Member related class
  **********************************/
 
+#include <string>
 #include "MemberListEntry.hpp"
 #include "Member.hpp"
-#include <utility>
-#include <iostream>
 
-Address::Address(const Address &anotherAddress) {
+
+Address::Address(char addrAIn, char addrBIn, char addrCIn, char addrDIn, short portIn) :
+addrA(addrAIn), addrB(addrBIn), addrC(addrCIn), addrD(addrDIn), port(portIn) { }
+
+Address::Address(const Address &anotherAddress)
+{
 	// strcpy(addr, anotherAddress.addr);
 	addrA = anotherAddress.addrA;
 	addrB = anotherAddress.addrB;
@@ -29,7 +33,8 @@ Address::Address(const Address &anotherAddress) {
 /**
  * Assignment operator overloading
  */
-Address& Address::operator =(const Address& anotherAddress) {
+Address& Address::operator =(const Address& anotherAddress)
+{
 	// strcpy(addr, anotherAddress.addr);
 	addrA = anotherAddress.addrA;
 	addrB = anotherAddress.addrB;
@@ -44,7 +49,8 @@ Address& Address::operator =(const Address& anotherAddress) {
  * Return true/non-zero if they have the same ip address and port number 
  * Return false/zero if they are different 
  */
-bool Address::operator ==(const Address& anotherAddress) {
+bool Address::operator ==(const Address& anotherAddress)
+{
 	return (addrA == anotherAddress.addrA && 
 		addrB == anotherAddress.addrB && 
 		addrC == anotherAddress.addrC && 
@@ -52,21 +58,36 @@ bool Address::operator ==(const Address& anotherAddress) {
 		port == anotherAddress.port);
 }
 
+std::string Address::to_string()
+{
+    return std::string(std::string(1, addrA) + "." +
+                       std::string(1, addrB) + "." +
+                       std::string(1, addrC) + "." +
+                       std::string(1, addrD));
+}
+void Address::init()
+{
+    std::memset(&addrA, 0, sizeof(addrA));
+    std::memset(&addrA, 0, sizeof(addrB));
+    std::memset(&addrA, 0, sizeof(addrC));
+    std::memset(&addrA, 0, sizeof(addrD));
+}
 
 /**
  * Constructor
  */
-MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp) {}
+MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp) { }
 
 /**
  * Constuctor
  */
-MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) {}
+MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) { }
 
 /**
  * Copy constructor
  */
-MemberListEntry::MemberListEntry(const MemberListEntry &anotherMLE) {
+MemberListEntry::MemberListEntry(const MemberListEntry &anotherMLE)
+{
     this->heartbeat = anotherMLE.heartbeat;
     this->address = anotherMLE.address;
     this->port = anotherMLE.port;
@@ -76,7 +97,8 @@ MemberListEntry::MemberListEntry(const MemberListEntry &anotherMLE) {
 /**
  * Assignment operator overloading
  */
-MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE) {
+MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE)
+{
     MemberListEntry temp(anotherMLE);
     std::swap(heartbeat, temp.heartbeat);
     std::swap(address, temp.address);
@@ -90,7 +112,8 @@ MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE) 
  *
  * DESCRIPTION: getter
  */
-Address& MemberListEntry::getAddress() {
+Address& MemberListEntry::getAddress()
+{
     return address;
 }
 
@@ -99,7 +122,8 @@ Address& MemberListEntry::getAddress() {
  *
  * DESCRIPTION: getter
  */
-short MemberListEntry::getport() {
+short MemberListEntry::getport()
+{
     return port;
 }
 
@@ -108,7 +132,8 @@ short MemberListEntry::getport() {
  *
  * DESCRIPTION: getter
  */
-long MemberListEntry::getheartbeat() {
+long MemberListEntry::getheartbeat()
+{
     return heartbeat;
 }
 
@@ -117,7 +142,8 @@ long MemberListEntry::getheartbeat() {
  *
  * DESCRIPTION: getter
  */
-long MemberListEntry::gettimestamp() {
+long MemberListEntry::gettimestamp()
+{
     return timestamp;
 }
 
@@ -126,7 +152,8 @@ long MemberListEntry::gettimestamp() {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::setAddress(Address& addr) {
+void MemberListEntry::setAddress(Address& addr)
+{
     this->address = addr;
 }
 
@@ -135,7 +162,8 @@ void MemberListEntry::setAddress(Address& addr) {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::setport(short port) {
+void MemberListEntry::setport(short port)
+{
     this->port = port;
 }
 
@@ -144,7 +172,8 @@ void MemberListEntry::setport(short port) {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::setheartbeat(long hearbeat) {
+void MemberListEntry::setheartbeat(long hearbeat)
+{
     this->heartbeat = hearbeat;
 }
 
@@ -153,6 +182,7 @@ void MemberListEntry::setheartbeat(long hearbeat) {
  *
  * DESCRIPTION: setter
  */
-void MemberListEntry::settimestamp(long long timestamp) {
+void MemberListEntry::settimestamp(long long timestamp)
+{
     this->timestamp = timestamp;
 }

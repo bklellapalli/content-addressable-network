@@ -6,28 +6,28 @@
 //  Copyright © 2017 Balakrishna. All rights reserved.
 //
 
-#ifndef Queue_hpp
-#define Queue_hpp
+#ifndef QUEUE_HPP
+#define QUEUE_HPP
 
-#include "Member.hpp"
 #include <queue>
+#include "Member.hpp"
 
 /**
  * Class name: Queue
  *
  * Description: This function wraps std::queue related functions
  */
-class Queue {
-
-public:
-    Queue() { }
-    virtual ~Queue() { }
-    static bool enqueue(std::queue<q_elt> *queue, void *buffer, int size)
-    {
-        q_elt element(buffer, size);
-        queue->emplace(element);
-        return true;
-    }
+class Queue
+{
+    public:
+        Queue() { }
+        virtual ~Queue() { }
+        static bool enqueue(std::queue<q_elt> *queue, void *buffer, int size)
+        {
+            q_elt element(buffer, size);
+            queue->emplace(element);
+            return true;
+        }
 };
 
-#endif /* Queue_hpp */
+#endif /* QUEUE_HPP */

@@ -1,23 +1,31 @@
+//
+//  Member.hpp
+//  Content_Addressable_Network
+//
+//  Created by Shriram Joshi on 4/29/17.
+//  Copyright © 2017 Balakrishna. All rights reserved.
+//
+
 #ifndef MEMBER_HPP
 #define MEMBER_HPP
 
-#include "MemberListEntry.hpp"
 #include <queue>
-#include <vector>
-#include <string>
-#include <cstdlib>
-#include <cstring>
+#include "MemberListEntry.hpp"
 
 /**
  * CLASS NAME: q_elt (Q_ELEMENT)
  *
  * DESCRIPTION: Entry in the queue
  */
-class q_elt {
-public:
-	void *elt;
-	int size;
-	q_elt(void *elt, int size);
+class q_elt
+{
+    private:
+        void *elt;
+        int size;
+    
+    public:
+        void* getElement();
+        q_elt(void *elt, int size);
 };
 
 /**
@@ -28,38 +36,50 @@ public:
 // Declaration and definition here
 class Member 
 {
-	public:
-		// This member's Address
-		//Address addr;
-		// boolean indicating if this member is up
-		bool inited;
-		// boolean indicating if this member is in the group
-		bool inGroup;
-		// boolean indicating if this member has failed
-		bool bFailed;
-		// number of my neighbors
-		int nnb;
-		// the node's own heartbeat
-		long heartbeat;
-		// counter for next ping
-		int pingCounter;
-		// counter for ping timeout
-		int timeOutCounter;
-		// Membership table
-		std::vector<MemberListEntry> memberList;
-		// My position in the membership table
-		std::vector<MemberListEntry>::iterator myPos;
-		// Queue for failure detection messages
-		std::queue<q_elt>* mesQ;
-		/**
-		 * Constructor
-		 */
-		Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0), pingCounter(0), timeOutCounter(0), mesQ(new std::queue<q_elt>()) {}
+    private:
+        // This member's Address
+        Address address;
+    
+        // This member's port number
+        short port;
+    
+        // boolean indicating if this member is up
+        bool inited;
+    
+        // boolean indicating if this member is in the group
+        bool inGroup;
+    
+        // boolean indicating if this member has failed
+        bool bFailed;
+    
+        // number of my neighbors
+        int nnb;
+    
+        // the node's own heartbeat
+        long heartbeat;
+    
+        // counter for next ping
+        int pingCounter;
+    
+        // counter for ping timeout
+        int timeOutCounter;
+	
+    public:
+        Member();
 		// copy constructor
 		Member(const Member &anotherMember) = delete;
 		// Assignment operator overloading
 		Member& operator =(const Member &anotherMember) = delete;
 		virtual ~Member() {delete mesQ;}
+    
+        // Membership table
+        std::vector<MemberListEntry> memberList;
+    
+        // My position in the membership table
+        std::vector<MemberListEntry>::iterator myPos;
+    
+        // Queue for failure detection messages
+        std::queue<q_elt>* mesQ;
 };
 
-#endif /* MEMBER_H_ */
+#endif /* MEMBER_HPP */

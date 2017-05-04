@@ -6,8 +6,8 @@
 //  Copyright © 2017 Balakrishna. All rights reserved.
 //
 
-#ifndef Zone_hpp
-#define Zone_hpp
+#ifndef ZONE_HPP
+#define ZONE_HPP
 
 #include <list>
 #include "Coordinate.hpp"
@@ -27,4 +27,4 @@ class Zone
      */
 };
 
-#endif /* Zone_hpp */
+#endif /* ZONE_HPP */

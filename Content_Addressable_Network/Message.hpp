@@ -6,16 +6,12 @@
 //  Copyright © 2017 Balakrishna. All rights reserved.
 //
 
-#ifndef Message_hpp
-#define Message_hpp
+#ifndef MESSAGE_HPP
+#define MESSAGE_HPP
 
 enum MsgTypes
 {
-    JOINREQ,
-    VIEWREQ,
-    LEAVEREQ,
-    SENDFILE,
-    SEARCHFILE
+    JOINREQ, VIEWREQ, LEAVEREQ, SENDMSG, HEARTBEAT
 };
 
 /* STRUCT NAME: MessageHdr
@@ -27,4 +23,4 @@ typedef struct MessageHdr
     
 } MessageHdr;
 
-#endif /* Message_hpp */
+#endif /* MESSAGE_HPP */

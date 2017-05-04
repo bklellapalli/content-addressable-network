@@ -6,17 +6,18 @@
 //  Copyright © 2017 Balakrishna. All rights reserved.
 //
 
-#ifndef Generator_hpp
-#define Generator_hpp
+#ifndef GENERATOR_HPP
+#define GENERATOR_HPP
 
 #include <string>
 #include "Coordinate.hpp"
+
 class Generator
 {
-    public:
     /*
+    public:
         Coordinate genRandonCoordinate(std::string keyword);
      */
 };
 
-#endif /* Generator_hpp */
+#endif /* GENERATOR_HPP */

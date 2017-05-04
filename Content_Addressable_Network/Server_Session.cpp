@@ -7,17 +7,10 @@
 //
 
 #include "Server_Session.hpp"
-#include <iostream>
 
-Server_Session::Server_Session(tcp::socket socket) : socket_(std::move(socket))
-{
-    
-}
+Server_Session::Server_Session(tcp::socket socket) : socket_(std::move(socket)) { }
 
-Server_Session::~Server_Session()
-{
-    
-}
+Server_Session::~Server_Session() { }
 
 void Server_Session::start(std::queue<q_elt>* mesQ)
 {
@@ -41,7 +34,4 @@ void Server_Session::do_read(std::queue<q_elt>* mesQ)
     //mesQ.emplace(q_elt);
 }
 
-void Server_Session::do_write(std::size_t length)
-{
-    
-}
+void Server_Session::do_write(std::size_t length) { }

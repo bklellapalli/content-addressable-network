@@ -13,13 +13,19 @@
  **********************************/
 
 #include "Member.hpp"
-#include <utility>
+
 /**
  * Constructor
  */
-q_elt::q_elt(void *elt, int size): elt(elt), size(size) {}
+q_elt::q_elt(void *elt, int size): elt(elt), size(size) { }
+
+void* q_elt::getElement()
+{
+    return elt;
+}
 
 /**
- * Copy constructor
+ * Constructor
  */
-
+Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0),
+pingCounter(0), timeOutCounter(0), mesQ(new std::queue<q_elt>()) { }
