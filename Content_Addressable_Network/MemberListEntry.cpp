@@ -13,6 +13,7 @@
  **********************************/
 
 #include <string>
+#include <sstream>
 #include "MemberListEntry.hpp"
 #include "Member.hpp"
 
@@ -65,6 +66,14 @@ std::string Address::to_string()
                        std::string(1, addrC) + "." +
                        std::string(1, addrD));
 }
+
+std::string Address::port_to_string()
+{
+    std::stringstream ss;
+    ss << port;
+    return ss.str();
+}
+
 void Address::init()
 {
     std::memset(&addrA, 0, sizeof(addrA));

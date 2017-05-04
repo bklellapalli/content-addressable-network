@@ -25,6 +25,7 @@ class Address
 		Address& operator =(const Address &anotherAddress);
 		bool operator ==(const Address &anotherAddress);
         std::string to_string();
+        std::string port_to_string();
         void init();
     
     public:

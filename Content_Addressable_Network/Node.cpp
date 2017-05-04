@@ -8,11 +8,13 @@
 
 #include <cstdlib>
 #include <vector>
+#include <string>
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 #include "Node.hpp"
 #include "Message.hpp"
 #include "Client.hpp"
+#include "Coordinate.hpp"
 
 Node::Node(boost::asio::io_service& io_service, int port) :
 server {io_service, port, rcvMsgsQ}
@@ -50,13 +52,10 @@ void Node::recvLoop()
 				break;
 			}
 			case JOINREQ:
-                // Generate Rando coordinate
                 break;
         	case LEAVEREQ:
                 break;
-		    case SENDMSG:
-                break;
-		    case VIEWREQ:
+            default:
                 break;
 		}
 	}
@@ -66,44 +65,89 @@ void Node::sendLoop()
 {
 	while(!sndMsgsQ->empty())
 	{
-		
+        boost::asio::io_service io_service;
+        char* data = (char*)sndMsgsQ->front().getElement();
+        sndMsgsQ->pop();
+        MessageHdr* hdr = (MessageHdr *)(data);
+        if(hdr->msgType == JOINREQ)
+        {
+            std::string address = send_to_address.to_string();
+            std::string port = send_to_address.port_to_string();
+            Client client(io_service, address, port);
+            client.write(data);
+        }
+        else
+        {
+            std::vector<MemberListEntry> memberList = this->memberList;
+            std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+            std::vector<MemberListEntry>::iterator it_end = memberList.end();
+            for(; it_beg != it_end; ++it_beg)
+            {
+                std::string address = (*it_beg).getAddress().to_string();
+                std::string port = (*it_beg).getAddress().port_to_string();
+                Client client(io_service, address, port);
+                client.write(data);
+            }
+        }
 	}
 }
 
-void Node::pushMessage(Address address, MsgTypes type)
+size_t Node::size_of_message(MsgTypes type)
+{
+    size_t msgsize = sizeof(MessageHdr) + (4 * sizeof(char) ) + sizeof(short) + sizeof(char);
+    if(type == JOINREQ)
+    {
+        msgsize += (2 * sizeof(short));
+    }
+    return msgsize;
+}
+
+
+void Node::pushMessage(MsgTypes type)
 {
     MessageHdr* header = (MessageHdr *) malloc(sizeof(MessageHdr) * sizeof(char));
-    size_t msgsize = sizeof(MessageHdr) + (4 * sizeof(char) ) + sizeof(address.port) + sizeof(char);
-    char* ptr = (char *) malloc(msgsize * sizeof(char));
+    size_t size = size_of_message(type);
     
-    switch(type)
+    char* ptr = (char *) malloc(size * sizeof(char));
+    header->msgType = type;
+    
+    memcpy((char*)ptr, &header->msgType, sizeof(MessageHdr));
+    memcpy((char*)(ptr + sizeof(MessageHdr)), &this->address.addrA, sizeof(char));
+    memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 1), &address.addrB, sizeof(char));
+    memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 2), &address.addrC, sizeof(char));
+    memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 3), &address.addrD, sizeof(char));
+    memcpy((short*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4), &address.port, sizeof(short));
+    
+    if(type == JOINREQ)
     {
-        case JOINREQ:
-            header->msgType = JOINREQ;
-            memcpy(&header->msgType, (char*)(ptr), sizeof(MessageHdr));
-            memcpy(&address.addrA, (char*)(ptr + sizeof(MessageHdr)), sizeof(char));
-            memcpy(&address.addrB, (char*)(ptr + sizeof(MessageHdr) + sizeof(char)), sizeof(char));
-            memcpy(&address.addrC, (char*)(ptr + sizeof(MessageHdr) + sizeof(char) + sizeof(char)), sizeof(char));
-            memcpy(&address.addrD, (char*)(ptr + sizeof(MessageHdr) + sizeof(char) + sizeof(char) + sizeof(char)), sizeof(char));
-            memcpy(&address.port, (short*)(ptr + sizeof(MessageHdr) + sizeof(char) + sizeof(char) + sizeof(char) + sizeof(char)), sizeof(short));
-            break;
-        case LEAVEREQ: header->msgType = LEAVEREQ;
-            memcpy(&header->msgType, (char*)(ptr), sizeof(MessageHdr));
-            break;
-        case VIEWREQ: //header->msgType = VIEWREQ;
-            break;
-        case SENDMSG: //header->msgType = SENDMSG;
-            break;
-        default: break;
+        short xValue = coordinates.getX();
+        short yValue = coordinates.getY();
+        memcpy((short*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &xValue, sizeof(short));
+        memcpy((short*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &yValue, sizeof(short));
     }
-    q_elt element(ptr, (int)msgsize);
+    q_elt element(ptr, (int)size);
     sndMsgsQ->push(element);
+}
+
+void Node::displayInfo()
+{
+    std::cout << "IP Address: " << this->address.to_string() << std::endl;
+    std::cout << "Port: " << this->address.port_to_string() << std::endl;
+    std::cout << "Neighbours: " <<  memberList.size() << std::endl;
+    std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+    std::vector<MemberListEntry>::iterator it_end = memberList.end();
+    int index = 1;
+    for(; it_beg != it_end; ++it_beg)
+    {
+        std::cout << index << ". IP Address: " << (*it_beg).getAddress().to_string() << " ";
+        std::cout << "Port: " << (*it_beg).getAddress().port_to_string() << std::endl;
+        ++index;
+    }
 }
 
 void Node::accept_user_input()
 {
-    Address address;
-    std::string ipAddress = "";
+    char ipAddress[16];
     short port = 0;
     int option = 0;
     
@@ -119,14 +163,40 @@ void Node::accept_user_input()
         switch(option)
         {
             case 1:
+                if(inGroup)
+                {
+                    displayInfo();
+                    std::cout << "\n******* Connected ********\n" << std::endl;
+                    break;
+                }
                 std::cout << "\nIp Address: ";
                 std::cin >> ipAddress;
                 std::cout << "\nPort: ";
                 std::cin >> port;
-                pushMessage(address, JOINREQ);
+                
+                char *token;
+                token = std::strtok(ipAddress, ".");
+                memcpy(&send_to_address.addrA, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrB, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrC, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrD, token, sizeof(char));
+                
+                memcpy(&send_to_address.port, &port, sizeof(short));
+                pushMessage(JOINREQ);
+                inGroup = true;
                 break;
             case 2:
-                pushMessage(address, LEAVEREQ);
+                pushMessage(LEAVEREQ);
+                inGroup = false;
+                break;
+            case 3:
+                displayInfo();
                 break;
         }
     }
@@ -242,9 +312,8 @@ int main(int argc, char* argv[])
 		std::cerr << "Node <port>" << std::endl;
 	}
 	
-	boost::asio::io_service io_service;
+    boost::asio::io_service io_service;
 	Node node(io_service, atoi(argv[1]));
-	
     boost::thread t1([&io_service](){io_service.run();});
 	boost::thread t2(boost::bind(&Node::init_mem_protocol, &node));
 	boost::thread t3(boost::bind(&Node::sendLoop, &node));

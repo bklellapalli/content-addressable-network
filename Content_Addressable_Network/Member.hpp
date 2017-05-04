@@ -11,6 +11,7 @@
 
 #include <queue>
 #include "MemberListEntry.hpp"
+#include "Coordinate.hpp"
 
 /**
  * CLASS NAME: q_elt (Q_ELEMENT)
@@ -36,12 +37,12 @@ class q_elt
 // Declaration and definition here
 class Member 
 {
-    private:
+    public:
         // This member's Address
         Address address;
     
-        // This member's port number
-        short port;
+        // send to address
+        Address send_to_address;
     
         // boolean indicating if this member is up
         bool inited;
@@ -63,6 +64,9 @@ class Member
     
         // counter for ping timeout
         int timeOutCounter;
+    
+        // X and Y coordinate
+        Coordinate coordinates;
 	
     public:
         Member();

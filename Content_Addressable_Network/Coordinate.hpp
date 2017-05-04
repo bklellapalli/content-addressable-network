@@ -11,15 +11,13 @@
 
 class Coordinate
 {
-    /*
      private:
-        double x,y;
+        short x, y;
     
     public:
-        Coordinate(double xIn, double xIn);
-        double getX(void);
-        double getY(void);
-     */
+        Coordinate();
+        short getX(void);
+        short getY(void);
 };
 
 #endif /* COORDINATE_HPP */
