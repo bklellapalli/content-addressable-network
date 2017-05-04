@@ -28,3 +28,13 @@ void Coordinate::setCoordinates(short xValue, short yValue)
     x = xValue;
     y = yValue;
 }
+
+short Coordinate::getX(void)
+{
+    return x;
+}
+
+short Coordinate::getY(void)
+{
+    return y;
+}
