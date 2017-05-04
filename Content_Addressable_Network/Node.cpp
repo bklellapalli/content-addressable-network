@@ -39,7 +39,7 @@ void Node::recvLoop()
 		switch(hdr->msgType)
 		{
 			case HEARTBEAT:
-			{
+            {
 				std::vector<MemberListEntry> memberList;
 				getMemberList(memberList, data);
 				std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
@@ -49,14 +49,35 @@ void Node::recvLoop()
 					this->insertEntry(this-> memberList, (*it_beg).getAddress(), (*it_beg).getport(),
                                       (*it_beg).getheartbeat(), (*it_beg).gettimestamp());
 				}
+            }
 				break;
-			}
+			
 			case JOINREQ:
+            {
+                short xValue, yValue;
+                memcpy(&xValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), sizeof(short));
+                memcpy(&yValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), sizeof(short));
+                
+                Coordinate clientCoordinate;
+                clientCoordinate.setCoordinates(xValue, yValue);
+                
+                if(zone.isCoordinateInZone(clientCoordinate))
+                {
+                    
+                }
+                else
+                {
+                
+                }
+            }
                 break;
+                
         	case LEAVEREQ:
                 break;
+            
             default:
                 break;
+                
 		}
 	}
 }

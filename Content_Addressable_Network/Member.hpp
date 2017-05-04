@@ -12,6 +12,7 @@
 #include <queue>
 #include "MemberListEntry.hpp"
 #include "Coordinate.hpp"
+#include "Zone.hpp"
 
 /**
  * CLASS NAME: q_elt (Q_ELEMENT)
@@ -67,6 +68,9 @@ class Member
     
         // X and Y coordinate
         Coordinate coordinates;
+    
+        // Current Zone
+        Zone zone;
 	
     public:
         Member();

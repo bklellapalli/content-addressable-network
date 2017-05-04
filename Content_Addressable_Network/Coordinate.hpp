@@ -16,6 +16,7 @@ class Coordinate
     
     public:
         Coordinate();
+        void setCoordinates(short xValue, short yValue);
         short getX(void);
         short getY(void);
 };

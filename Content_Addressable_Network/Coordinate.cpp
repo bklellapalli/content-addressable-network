@@ -22,3 +22,9 @@ Coordinate::Coordinate()
     boost::random::uniform_int_distribution<> dist_y{1, 100};
     y = dist_y(gen_y);
 }
+
+void Coordinate::setCoordinates(short xValue, short yValue)
+{
+    x = xValue;
+    y = yValue;
+}

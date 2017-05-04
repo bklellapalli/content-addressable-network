@@ -14,17 +14,17 @@
 
 class Zone
 {
-    /*
     private:
-        Cordinate c1,c2,c3,c4;
+        Coordinate c1, c2, c3, c4;
     
     public:
-        bool hasZoneShareAxis(Zone zone, bool isExactlySame);
+        Zone();
         bool isCoordinateInZone(Coordinate coordinate);
-        double findClosestCoordinate(Coordinate coordinate);
-        std::list<Coordinate> getAllCoordinates();
-        double calculateArea();
-     */
+    
+        //bool hasZoneShareAxis(Zone zone, bool isExactlySame);
+        //double findClosestCoordinate(Coordinate coordinate);
+        //std::list<Coordinate> getAllCoordinates();
+        //double calculateArea();
 };
 
 #endif /* ZONE_HPP */
