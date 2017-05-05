@@ -205,7 +205,13 @@ void MemberListEntry::setCurrentZone(boost::geometry::model::d2::point_xy<int> c
 {
     this->current_zone.setZone(c1, c2, c3, c4);
 }
+
 Zone MemberListEntry::getCurrentZone()
 {
     return current_zone;
+}
+
+short MemberListEntry::findMinDistance(boost::geometry::model::d2::point_xy<int> pt)
+{
+    return current_zone.minDistance(pt);
 }

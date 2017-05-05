@@ -7,6 +7,7 @@
 //
 
 #include "Zone.hpp"
+#include <algorithm>
 
 Zone::Zone()
 {
@@ -96,4 +97,13 @@ bool Zone::is_share_axis(Zone zone)
     if(is_share_y_axis(p1, p4, zone.p2, zone.p3)) return true;
     
     return false;
+}
+
+short Zone::minDistance(boost::geometry::model::d2::point_xy<int> pt)
+{
+    short d1 = boost::geometry::distance(p1, pt);
+    short d2 = boost::geometry::distance(p2, pt);
+    short d3 = boost::geometry::distance(p3, pt);
+    short d4 = boost::geometry::distance(p4, pt);
+    return std::min(d1, std::min(d2, std::min(d3, d4)));
 }

@@ -29,6 +29,7 @@ class Zone
                      boost::geometry::model::d2::point_xy<int> c4);
     
         bool isCoordinateInZone(boost::geometry::model::d2::point_xy<int> point);
+        short minDistance(boost::geometry::model::d2::point_xy<int> pt);
         bool is_share_axis(Zone zone);
     
     private:

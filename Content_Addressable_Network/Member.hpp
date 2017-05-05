@@ -28,6 +28,7 @@ class q_elt
     
     public:
         void* getElement();
+        int getSize();
         q_elt(void *elt, int size);
 };
 
@@ -90,7 +91,6 @@ class Member
         std::queue<q_elt>* mesQ;
     
         bool isNeighbour(MemberListEntry entry);
-        
 };
 
 #endif /* MEMBER_HPP */

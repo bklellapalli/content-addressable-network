@@ -33,7 +33,8 @@ void Node::recvLoop()
 	if(!rcvMsgsQ->empty())
 	{
         char* data = (char*)rcvMsgsQ->front().getElement();
-		rcvMsgsQ->pop();
+        int size = rcvMsgsQ->front().getSize();
+        rcvMsgsQ->pop();
 		MessageHdr* hdr = (MessageHdr *)(data);
 		switch(hdr->msgType)
 		{
@@ -84,18 +85,28 @@ void Node::recvLoop()
                 }
                 else
                 {
+                    short max_distance = 100;
                     std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
                     std::vector<MemberListEntry>::iterator it_end = memberList.end();
                     for(; it_beg != it_end; ++it_beg)
                     {
-                            // Find closest neighbour
+                        short distance = (*it_beg).findMinDistance(pt);
+                        if(distance < max_distance)
+                        {
+                            send_to_address =  (*it_beg).getAddress();
+                        }
                     }
-                    // TODO: add to msg queue
+                    q_elt element(data, size);
+                    sndMsgsQ->push(element);
+                    
                 }
             }
                 break;
                 
         	case LEAVEREQ:
+                break;
+                
+            case JOINREP:
                 break;
             
             default:

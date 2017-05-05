@@ -26,6 +26,11 @@ void* q_elt::getElement()
     return elt;
 }
 
+int q_elt::getSize()
+{
+    return size;
+}
+
 /**
  * Constructor
  */

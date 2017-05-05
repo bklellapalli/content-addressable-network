@@ -62,6 +62,7 @@ class MemberListEntry
         void settimestamp(long long timestamp);
         void setCurrentZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2,     boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4);
         Zone getCurrentZone();
+        short findMinDistance(boost::geometry::model::d2::point_xy<int> pt);
     
     public:
         short port;
