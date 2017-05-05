@@ -11,6 +11,8 @@
 
 #include <vector>
 #include <boost/asio.hpp>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
 #include "Server.hpp"
 #include "Member.hpp"
 #include "Message.hpp"

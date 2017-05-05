@@ -10,21 +10,37 @@
 #define ZONE_HPP
 
 #include <list>
-#include "Coordinate.hpp"
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
 
 class Zone
 {
-    private:
-        Coordinate c1, c2, c3, c4;
+    public:
+        boost::geometry::model::d2::point_xy<int> p1, p2, p3, p4;
     
     public:
         Zone();
-        bool isCoordinateInZone(Coordinate coordinate);
+        Zone operator=(const Zone& obj);
+
+        Zone splitZone();
+        void setZone(boost::geometry::model::d2::point_xy<int> c1,
+                     boost::geometry::model::d2::point_xy<int> c2,
+                     boost::geometry::model::d2::point_xy<int> c3,
+                     boost::geometry::model::d2::point_xy<int> c4);
     
-        //bool hasZoneShareAxis(Zone zone, bool isExactlySame);
-        //double findClosestCoordinate(Coordinate coordinate);
-        //std::list<Coordinate> getAllCoordinates();
-        //double calculateArea();
+        bool isCoordinateInZone(boost::geometry::model::d2::point_xy<int> point);
+        bool is_share_axis(Zone zone);
+    
+    private:
+        bool is_share_x_axis(boost::geometry::model::d2::point_xy<int> c1,
+                         boost::geometry::model::d2::point_xy<int> c2,
+                         boost::geometry::model::d2::point_xy<int> target_c1,
+                         boost::geometry::model::d2::point_xy<int> target_c2);
+    
+        bool is_share_y_axis(boost::geometry::model::d2::point_xy<int> c1,
+                         boost::geometry::model::d2::point_xy<int> c2,
+                         boost::geometry::model::d2::point_xy<int> target_c1,
+                         boost::geometry::model::d2::point_xy<int> target_c2);
 };
 
 #endif /* ZONE_HPP */

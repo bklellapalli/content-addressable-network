@@ -10,6 +10,7 @@
 #define MEMBERLISTENTRY_HPP
 
 #include <string>
+#include "Zone.hpp"
 
 /**
  * CLASS NAME: Address
@@ -42,10 +43,12 @@ class MemberListEntry
 {
     private:
         Address address;
+        Zone current_zone;
     
     public:
         MemberListEntry(Address&, short, long, long long);
         MemberListEntry(Address&, short port);
+        MemberListEntry(Address&, short port, Zone zone);
         MemberListEntry(): port(0), heartbeat(0), timestamp(0) {}
         MemberListEntry(const MemberListEntry &anotherMLE);
         MemberListEntry& operator =(const MemberListEntry&);
@@ -57,6 +60,8 @@ class MemberListEntry
         void setport(short port);
         void setheartbeat(long hearbeat);
         void settimestamp(long long timestamp);
+        void setCurrentZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2,     boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4);
+        Zone getCurrentZone();
     
     public:
         short port;

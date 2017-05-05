@@ -11,8 +11,9 @@
 
 #include <queue>
 #include "MemberListEntry.hpp"
-#include "Coordinate.hpp"
 #include "Zone.hpp"
+#include <boost/geometry/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
 
 /**
  * CLASS NAME: q_elt (Q_ELEMENT)
@@ -66,11 +67,10 @@ class Member
         // counter for ping timeout
         int timeOutCounter;
     
-        // X and Y coordinate
-        Coordinate coordinates;
+        boost::geometry::model::d2::point_xy<int> point;
     
         // Current Zone
-        Zone zone;
+        Zone current_zone;
 	
     public:
         Member();
@@ -88,6 +88,9 @@ class Member
     
         // Queue for failure detection messages
         std::queue<q_elt>* mesQ;
+    
+        bool isNeighbour(MemberListEntry entry);
+        
 };
 
 #endif /* MEMBER_HPP */

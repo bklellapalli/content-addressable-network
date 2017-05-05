@@ -92,6 +92,8 @@ MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long
  */
 MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) { }
 
+MemberListEntry::MemberListEntry(Address& addr, short port, Zone zone) : address(addr), port(port), current_zone(zone) { }
+
 /**
  * Copy constructor
  */
@@ -194,4 +196,16 @@ void MemberListEntry::setheartbeat(long hearbeat)
 void MemberListEntry::settimestamp(long long timestamp)
 {
     this->timestamp = timestamp;
+}
+
+void MemberListEntry::setCurrentZone(boost::geometry::model::d2::point_xy<int> c1,
+                                     boost::geometry::model::d2::point_xy<int> c2,
+                                     boost::geometry::model::d2::point_xy<int> c3,
+                                     boost::geometry::model::d2::point_xy<int> c4)
+{
+    this->current_zone.setZone(c1, c2, c3, c4);
+}
+Zone MemberListEntry::getCurrentZone()
+{
+    return current_zone;
 }

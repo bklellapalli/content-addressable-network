@@ -14,7 +14,6 @@
 #include "Node.hpp"
 #include "Message.hpp"
 #include "Client.hpp"
-#include "Coordinate.hpp"
 
 Node::Node(boost::asio::io_service& io_service, int port) :
 server {io_service, port, rcvMsgsQ}
@@ -58,16 +57,40 @@ void Node::recvLoop()
                 memcpy(&xValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), sizeof(short));
                 memcpy(&yValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), sizeof(short));
                 
-                Coordinate clientCoordinate;
-                clientCoordinate.setCoordinates(xValue, yValue);
+                boost::geometry::model::d2::point_xy<int> pt;
+                boost::geometry::assign_values(pt, xValue, yValue);
                 
-                if(zone.isCoordinateInZone(clientCoordinate))
+                if(current_zone.isCoordinateInZone(pt))
                 {
+                    char addrA, addrB, addrC, addrD;
+                    short port;
                     
+                    Zone new_zone = current_zone.splitZone();
+                    memcpy(&addrA, (char*)(data + sizeof(MessageHdr)), sizeof(char));
+                    memcpy(&addrB, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 1), sizeof(char));
+                    memcpy(&addrC, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 2), sizeof(char));
+                    memcpy(&addrD, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 3), sizeof(char));
+                    memcpy(&port, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4), sizeof(short));
+                    Address addr(addrA, addrB, addrC, addrD, port);
+            
+                    // TODO: Send membership list entry in msg body
+                    
+                    MemberListEntry entry(addr, port, new_zone);
+                    memberList.push_back(entry);
+                    memberList.erase(std::remove_if(memberList.begin(), memberList.end(),[this](MemberListEntry entry)
+                    {
+                        return !isNeighbour(entry);
+                    }), memberList.end());
                 }
                 else
                 {
-                
+                    std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+                    std::vector<MemberListEntry>::iterator it_end = memberList.end();
+                    for(; it_beg != it_end; ++it_beg)
+                    {
+                            // Find closest neighbour
+                    }
+                    // TODO: add to msg queue
                 }
             }
                 break;
@@ -141,8 +164,8 @@ void Node::pushMessage(MsgTypes type)
     
     if(type == JOINREQ)
     {
-        short xValue = coordinates.getX();
-        short yValue = coordinates.getY();
+        short xValue = point.x();
+        short yValue = point.y();
         memcpy((short*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &xValue, sizeof(short));
         memcpy((short*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &yValue, sizeof(short));
     }
