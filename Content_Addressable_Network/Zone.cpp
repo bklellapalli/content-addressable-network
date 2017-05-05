@@ -32,7 +32,8 @@ bool Zone::is_share_x_axis(boost::geometry::model::d2::point_xy<int> c1,
                            boost::geometry::model::d2::point_xy<int> target_c2)
 {
     return ( c1.y() == target_c1.y() &&
-            (c1.x() <= target_c1.x() && target_c1.x() <= c2.x()) || (c1.x() <= target_c2.x() && target_c2.x() <= c2.x()) ||
+            (c1.x() <= target_c1.x() && target_c1.x() <= c2.x()) || 
+            (c1.x() <= target_c2.x() && target_c2.x() <= c2.x()) ||
             (target_c1.x() <= c1.x() && c1.x() <= target_c2.x()) );
 }
 
