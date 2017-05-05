@@ -35,25 +35,25 @@ void Node::recvLoop()
         char* data = (char*)rcvMsgsQ->front().getElement();
         int size = rcvMsgsQ->front().getSize();
         rcvMsgsQ->pop();
-		MessageHdr* hdr = (MessageHdr *)(data);
-		switch(hdr->msgType)
+	MessageHdr* hdr = (MessageHdr *)(data);
+	switch(hdr->msgType)
+	{
+	     case HEARTBEAT:
+             {
+		std::vector<MemberListEntry> memberList;
+		getMemberList(memberList, data);
+		std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+		std::vector<MemberListEntry>::iterator it_end = memberList.end();
+		for(; it_beg != it_end; ++it_beg) 
 		{
-			case HEARTBEAT:
-            {
-				std::vector<MemberListEntry> memberList;
-				getMemberList(memberList, data);
-				std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
-				std::vector<MemberListEntry>::iterator it_end = memberList.end();
-				for(; it_beg != it_end; ++it_beg) 
-				{
-					this->insertEntry(this-> memberList, (*it_beg).getAddress(), (*it_beg).getport(),
-                                      (*it_beg).getheartbeat(), (*it_beg).gettimestamp());
-				}
-            }
-				break;
+			this->insertEntry(this-> memberList, (*it_beg).getAddress(), (*it_beg).getport(),
+                        (*it_beg).getheartbeat(), (*it_beg).gettimestamp());
+		}
+             }
+	     break;
 			
-			case JOINREQ:
-            {
+	case JOINREQ:
+        	{
                 short xValue, yValue;
                 memcpy(&xValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), sizeof(short));
                 memcpy(&yValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), sizeof(short));
