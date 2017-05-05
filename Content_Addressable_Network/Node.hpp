@@ -23,19 +23,19 @@ class Node : public Member
 		Server server;
 		std::queue<q_elt>* sndMsgsQ;
 		std::queue<q_elt>* rcvMsgsQ;
-        size_t size_of_message(MsgTypes type);
-        void displayInfo();
+        	size_t size_of_message(MsgTypes type);
+        	void displayInfo();
 	
-    public:
-        Node(boost::asio::io_service& io_service, int port);
+   	public:
+        	Node(boost::asio::io_service& io_service, int port);
 		~Node();
 		//receive messages from clients
 		void recvLoop();
 		void sendLoop();
 		//thread function
 		void init_mem_protocol(void);
-        void accept_user_input();
-        void pushMessage(MsgTypes type);
+        	void accept_user_input();
+        	void pushMessage(MsgTypes type);
 		void getMemberList(std::vector<MemberListEntry>&, char*, bool = false);
 		bool isNodeRemoved(Address& addr, int port);
 		void insertEntry(std::vector<MemberListEntry>& memberList, Address& address, short port,
