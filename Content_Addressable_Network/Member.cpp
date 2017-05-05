@@ -16,6 +16,11 @@
 #include <ctime>
 #include "Member.hpp"
 
+bool Member::isNeighbour(MemberListEntry entry)
+{
+    return current_zone.is_share_axis(entry.getCurrentZone());
+}
+
 /**
  * Constructor
  */
@@ -46,10 +51,4 @@ pingCounter(0), timeOutCounter(0), mesQ(new std::queue<q_elt>())
     boost::random::uniform_int_distribution<> dist_y{1, 100};
     
     boost::geometry::assign_values(point, dist_x(gen_x), dist_y(gen_y));
-}
-
-
-bool Member::isNeighbour(MemberListEntry entry)
-{
-    return current_zone.is_share_axis(entry.getCurrentZone());
 }
