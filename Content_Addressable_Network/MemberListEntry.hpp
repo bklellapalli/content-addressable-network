@@ -9,8 +9,8 @@
 #ifndef MEMBERLISTENTRY_HPP
 #define MEMBERLISTENTRY_HPP
 
-#include <string>
 #include "Zone.hpp"
+#include <string>
 
 /**
  * CLASS NAME: Address
@@ -43,31 +43,33 @@ class MemberListEntry
 {
     private:
         Address address;
-        Zone current_zone;
-    
+    	
     public:
         MemberListEntry(Address&, short, long, long long);
         MemberListEntry(Address&, short port);
         MemberListEntry(Address&, short port, Zone zone);
+        MemberListEntry(Address&, short, long, long long, Zone zone);
         MemberListEntry(): port(0), heartbeat(0), timestamp(0) {}
         MemberListEntry(const MemberListEntry &anotherMLE);
         MemberListEntry& operator =(const MemberListEntry&);
         Address& getAddress();
         short getport();
         long getheartbeat();
-        long gettimestamp();
+        long long gettimestamp();
         void setAddress(Address&);
         void setport(short port);
         void setheartbeat(long hearbeat);
         void settimestamp(long long timestamp);
-        void setCurrentZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2,     boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4);
-        Zone getCurrentZone();
-        short findMinDistance(boost::geometry::model::d2::point_xy<int> pt);
-    
+    	void setCurrentZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2, 
+    	boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4);
+		Zone getCurrentZone();
+		short findMinDistance(boost::geometry::model::d2::point_xy<int> pt);
     public:
         short port;
         long heartbeat;
         long long timestamp;
+        bool bDeleted;
+        Zone current_zone;
 };
 
 #endif /* MEMBERLISTENTRY_HPP */

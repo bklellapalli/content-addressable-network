@@ -20,12 +20,14 @@ namespace src = boost::log::sources;
 namespace expr = boost::log::expressions;
 namespace sinks = boost::log::sinks;
 namespace attrs = boost::log::attributes;
+namespace keywords = boost::log::keywords;
 
 BOOST_LOG_ATTRIBUTE_KEYWORD(line_id, "LineID", unsigned int)
 BOOST_LOG_ATTRIBUTE_KEYWORD(timestamp, "TimeStamp", boost::posix_time::ptime)
 BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", logging::trivial::severity_level)
 
 BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
+	
     src::severity_logger_mt<boost::log::trivial::severity_level> logger;
 
     // add attributes
@@ -38,7 +40,7 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
 
     // add a logfile stream to our sink
     sink->locked_backend()->add_stream(boost::make_shared<std::ofstream>(LOGFILE));
-
+	sink->locked_backend()->auto_flush(true);
     // add "console" output stream to our sink
     sink->locked_backend()->add_stream(boost::shared_ptr<std::ostream>(&std::clog, boost::null_deleter()));
 
@@ -58,3 +60,13 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
 
     return logger;
 }
+
+/*int main()
+{
+	LOG_TRACE << "this is a trace message";
+  LOG_DEBUG << "this is a debug message";
+  LOG_WARNING << "this is a warning message";
+  LOG_ERROR << "this is an error message";
+LOG_FATAL << "this is a fatal error message";
+	return 0;
+}*/

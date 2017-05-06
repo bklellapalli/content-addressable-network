@@ -9,28 +9,11 @@
 #ifndef MEMBER_HPP
 #define MEMBER_HPP
 
-#include <queue>
 #include "MemberListEntry.hpp"
 #include "Zone.hpp"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
-
-/**
- * CLASS NAME: q_elt (Q_ELEMENT)
- *
- * DESCRIPTION: Entry in the queue
- */
-class q_elt
-{
-    private:
-        void *elt;
-        int size;
-    
-    public:
-        void* getElement();
-        int getSize();
-        q_elt(void *elt, int size);
-};
+#include <queue>
 
 /**
  * CLASS NAME: Member
@@ -71,7 +54,13 @@ class Member
         boost::geometry::model::d2::point_xy<int> point;
     
         // Current Zone
-        Zone current_zone;
+		Zone current_zone;
+		
+		// Membership table
+        std::vector<MemberListEntry> memberList;
+    
+        // My position in the membership table
+        std::vector<MemberListEntry>::iterator myPos;
 	
     public:
         Member();
@@ -79,17 +68,8 @@ class Member
 		Member(const Member &anotherMember) = delete;
 		// Assignment operator overloading
 		Member& operator =(const Member &anotherMember) = delete;
-		virtual ~Member() {delete mesQ;}
-    
-        // Membership table
-        std::vector<MemberListEntry> memberList;
-    
-        // My position in the membership table
-        std::vector<MemberListEntry>::iterator myPos;
-    
-        // Queue for failure detection messages
-        std::queue<q_elt>* mesQ;
-    
+		virtual ~Member();
+    	// Checks whether entry is my neighbour
         bool isNeighbour(MemberListEntry entry);
 };
 

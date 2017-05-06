@@ -9,9 +9,10 @@
 #ifndef SERVER_SESSION_HPP
 #define SERVER_SESSION_HPP
 
+#include "Message.hpp"
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
-#include "Member.hpp"
+#include <queue>
 
 using boost::asio::ip::tcp;
 

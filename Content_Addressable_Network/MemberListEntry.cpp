@@ -12,11 +12,12 @@
  * DESCRIPTION: Definition of all Member related class
  **********************************/
 
-#include <string>
-#include <sstream>
 #include "MemberListEntry.hpp"
 #include "Member.hpp"
-
+#include <string>
+#include <sstream>
+#include <cstddef>
+#include <cstring>
 
 Address::Address(char addrAIn, char addrBIn, char addrCIn, char addrDIn, short portIn) :
 addrA(addrAIn), addrB(addrBIn), addrC(addrCIn), addrD(addrDIn), port(portIn) { }
@@ -85,7 +86,7 @@ void Address::init()
 /**
  * Constructor
  */
-MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp) { }
+MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp), bDeleted(false){ }
 
 /**
  * Constuctor
@@ -93,6 +94,9 @@ MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long
 MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) { }
 
 MemberListEntry::MemberListEntry(Address& addr, short port, Zone zone) : address(addr), port(port), current_zone(zone) { }
+
+MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp, Zone zone) 
+	: address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp), current_zone(zone) { }
 
 /**
  * Copy constructor
@@ -153,7 +157,7 @@ long MemberListEntry::getheartbeat()
  *
  * DESCRIPTION: getter
  */
-long MemberListEntry::gettimestamp()
+long long MemberListEntry::gettimestamp()
 {
     return timestamp;
 }

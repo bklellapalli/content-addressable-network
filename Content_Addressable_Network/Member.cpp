@@ -12,37 +12,16 @@
  * DESCRIPTION: Definition of all Member related class
  **********************************/
 
-#include <boost/random.hpp>
-#include <ctime>
 #include "Member.hpp"
-
-bool Member::isNeighbour(MemberListEntry entry)
-{
-    return current_zone.is_share_axis(entry.getCurrentZone());
-}
-
+#include <utility>
+#include <ctime>
+#include <boost/random.hpp>
 /**
  * Constructor
  */
-q_elt::q_elt(void *elt, int size): elt(elt), size(size) { }
-
-void* q_elt::getElement()
+Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0), pingCounter(0), timeOutCounter(0)
 {
-    return elt;
-}
-
-int q_elt::getSize()
-{
-    return size;
-}
-
-/**
- * Constructor
- */
-Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0),
-pingCounter(0), timeOutCounter(0), mesQ(new std::queue<q_elt>())
-{
-    std::time_t now_x = std::time(0);
+	std::time_t now_x = std::time(0);
     boost::random::mt19937 gen_x{static_cast<std::uint32_t>(now_x)};
     boost::random::uniform_int_distribution<> dist_x{1, 100};
     
@@ -51,4 +30,16 @@ pingCounter(0), timeOutCounter(0), mesQ(new std::queue<q_elt>())
     boost::random::uniform_int_distribution<> dist_y{1, 100};
     
     boost::geometry::assign_values(point, dist_x(gen_x), dist_y(gen_y));
+}
+
+/*
+ * Destructor
+ */
+Member::~Member()
+{
+}
+
+bool Member::isNeighbour(MemberListEntry entry)
+{
+    return current_zone.is_share_axis(entry.getCurrentZone());
 }

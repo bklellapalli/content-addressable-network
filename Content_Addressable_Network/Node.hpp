@@ -9,38 +9,41 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-#include <vector>
-#include <boost/asio.hpp>
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
 #include "Server.hpp"
 #include "Member.hpp"
 #include "Message.hpp"
+#include "Message.hpp"
+#include <boost/asio.hpp>
+
+#define TREMOVE 50
+#define TFAIL 10
 
 class Node : public Member
 {
 	private:
-		Server server;
+		Server* server;
 		std::queue<q_elt>* sndMsgsQ;
 		std::queue<q_elt>* rcvMsgsQ;
-        	size_t size_of_message(MsgTypes type);
-        	void displayInfo();
-	
-   	public:
-        	Node(boost::asio::io_service& io_service, int port);
+	public:
+		Node(boost::asio::io_service& io_service, int port); 
 		~Node();
-		//receive messages from clients
-		void recvLoop();
-		void sendLoop();
+
 		//thread function
-		void init_mem_protocol(void);
-        	void accept_user_input();
-        	void pushMessage(MsgTypes type);
+		void init_mem_protocol(void);	
+		void accept_user_input(void);
+        void pushMessage(MsgType type);
+        void recv(void);
+		void sendLoop(void);
+		
+	private:
 		void getMemberList(std::vector<MemberListEntry>&, char*, bool = false);
 		bool isNodeRemoved(Address& addr, int port);
-		void insertEntry(std::vector<MemberListEntry>& memberList, Address& address, short port,
-                         long heartbeat, long timestamp, bool flag = false);
-    
+		void insertEntry(std::vector<MemberListEntry>& memberList, Address& address, short port, long heartbeat, long long timestamp);
+		size_t size_of_message(MsgType type);
+        void displayInfo(void);
+        short getRandomReceivers(void);
+        void fillMemberShipList(char* msg);
+		
 };
 
-#endif /* NODE_HPP */
+#endif  /* NODE_HPP */
