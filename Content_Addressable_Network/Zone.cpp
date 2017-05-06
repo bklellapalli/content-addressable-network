@@ -1,10 +1,12 @@
-//
-//  Zone.cpp
-//  Content_Addressable_Network
-//
-//  Created by Balakrishna Lellapalli on 5/4/17.
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
+
+/**********************************
+ * FILE NAME: Zone.cpp
+ *
+ * Created by Balakrishna Lellapalli on 5/4/17
+ * DESCRIPTION: Definition of all Zone related class
+ *
+ * Copyright © 2017 Balakrishna. All rights reserved.
+ **********************************/
 
 #include "Zone.hpp"
 
@@ -22,16 +24,16 @@ Zone Zone::operator=(const Zone& obj)
     return *this;
 }
 
-void Zone::setZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2,
-             boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4)
+void Zone::setZone(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
+                   boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4)
 {
     boost::geometry::assign_values(p1, c1.x(), c1.y());
     boost::geometry::assign_values(p2, c2.x(), c2.y());
     boost::geometry::assign_values(p3, c3.x(), c3.y());
-    boost::geometry::assign_values(p4,c4.x(), c4.y());
+    boost::geometry::assign_values(p4, c4.x(), c4.y());
 }
 
-bool Zone::isCoordinateInZone(boost::geometry::model::d2::point_xy<int> point)
+bool Zone::isCoordinateInZone(boost_geometry::point_xy<short> point)
 {
     return (p1.x() <= point.x() && point.x() <= p2.x() &&
             p1.y() <= point.y() && point.y() <= p4.y());
@@ -42,10 +44,10 @@ Zone Zone::splitZone()
     short d1 = boost::geometry::distance(p1, p2);
     short d2 = boost::geometry::distance(p1, p4);
     
-    boost::geometry::model::d2::point_xy<int> c1(p1.x(), p1.y());
-    boost::geometry::model::d2::point_xy<int> c2(p2.x(), p2.y());
-    boost::geometry::model::d2::point_xy<int> c3(p3.x(), p3.y());
-    boost::geometry::model::d2::point_xy<int> c4(p4.x(), p4.y());
+    boost_geometry::point_xy<short> c1(p1.x(), p1.y());
+    boost_geometry::point_xy<short> c2(p2.x(), p2.y());
+    boost_geometry::point_xy<short> c3(p3.x(), p3.y());
+    boost_geometry::point_xy<short> c4(p4.x(), p4.y());
     
     if(d1 > d2)
     {
@@ -61,29 +63,29 @@ Zone Zone::splitZone()
         boost::geometry::assign_values(c1, p4.x(), p4.y());
         boost::geometry::assign_values(c2, p3.x(), p3.y());
     }
-    Zone new_zone;
-    new_zone.setZone(c1, c2, c3, c4);
-    return new_zone;
+    
+    Zone zone_new;
+    zone_new.setZone(c1, c2, c3, c4);
+    return zone_new;
 }
 
-bool Zone::is_share_x_axis(boost::geometry::model::d2::point_xy<int> c1,
-                           boost::geometry::model::d2::point_xy<int> c2,
-                           boost::geometry::model::d2::point_xy<int> target_c1,
-                           boost::geometry::model::d2::point_xy<int> target_c2)
+bool Zone::is_share_x_axis(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
+                           boost_geometry::point_xy<short> target_c1, boost_geometry::point_xy<short> target_c2)
 {
-    return ( (c1.y() == target_c1.y()) && (c1.x() <= target_c1.x()) && (target_c1.x() <= c2.x()) || (c1.x() <= target_c2.x() && target_c2.x() <= c2.x()) ||
-            (target_c1.x() <= c1.x() && c1.x() <= target_c2.x()) );
+    return ( (c1.y() == target_c1.y()) &&
+                ( c1.x() <= target_c1.x()) && (target_c1.x() <= c2.x()) ||
+                    (c1.x() <= target_c2.x() && target_c2.x() <= c2.x()) ||
+                            (target_c1.x() <= c1.x() && c1.x() <= target_c2.x()) );
 }
 
-bool Zone::is_share_y_axis(boost::geometry::model::d2::point_xy<int> c1,
-                           boost::geometry::model::d2::point_xy<int> c2,
-                           boost::geometry::model::d2::point_xy<int> target_c1,
-                           boost::geometry::model::d2::point_xy<int> target_c2)
+bool Zone::is_share_y_axis(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
+                           boost_geometry::point_xy<short> target_c1, boost_geometry::point_xy<short> target_c2)
 {
     
     return ( c1.x() == target_c1.x() &&
-            (c1.y() <= target_c1.y() && target_c1.y() <= c2.y()) || (c1.y() <= target_c2.y() && target_c2.y() <= c2.y()) ||
-            (target_c1.y() <= c1.y() && c1.y() <= target_c2.y()) );
+                ( c1.y() <= target_c1.y() && target_c1.y() <= c2.y()) ||
+                    (c1.y() <= target_c2.y() && target_c2.y() <= c2.y()) ||
+                        (target_c1.y() <= c1.y() && c1.y() <= target_c2.y()) );
 }
 
 bool Zone::is_share_axis(Zone zone)
@@ -97,7 +99,7 @@ bool Zone::is_share_axis(Zone zone)
     return false;
 }
 
-short Zone::minDistance(boost::geometry::model::d2::point_xy<int> pt)
+short Zone::minDistance(boost::geometry::model::d2::point_xy<short> pt)
 {
     short d1 = boost::geometry::distance(p1, pt);
     short d2 = boost::geometry::distance(p2, pt);

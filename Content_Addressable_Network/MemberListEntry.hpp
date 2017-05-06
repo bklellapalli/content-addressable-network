@@ -1,16 +1,11 @@
-//
-//  MemberListEntry.hpp
-//  Content_Addressable_Network
-//
-//  Created by Shriram Joshi on 5/1/17.
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
 
 #ifndef MEMBERLISTENTRY_HPP
 #define MEMBERLISTENTRY_HPP
 
-#include "Zone.hpp"
 #include <string>
+#include "Zone.hpp"
+
+namespace boost_geometry = boost::geometry::model::d2;
 
 /**
  * CLASS NAME: Address
@@ -20,6 +15,10 @@
 class Address
 {
     public:
+        char addrA, addrB, addrC, addrD;
+        short port;
+    
+    public:
         Address() { }
         Address(char addrAIn, char addrBIn, char addrCIn, char addrDIn, short portIn);
 		Address(const Address &anotherAddress);
@@ -28,10 +27,6 @@ class Address
         std::string to_string();
         std::string port_to_string();
         void init();
-    
-    public:
-        char addrA, addrB, addrC, addrD;
-        short port;
 };
 
 /**
@@ -43,33 +38,34 @@ class MemberListEntry
 {
     private:
         Address address;
-    	
+    
     public:
-        MemberListEntry(Address&, short, long, long long);
-        MemberListEntry(Address&, short port);
-        MemberListEntry(Address&, short port, Zone zone);
-        MemberListEntry(Address&, short, long, long long, Zone zone);
-        MemberListEntry(): port(0), heartbeat(0), timestamp(0) {}
-        MemberListEntry(const MemberListEntry &anotherMLE);
-        MemberListEntry& operator =(const MemberListEntry&);
-        Address& getAddress();
-        short getport();
-        long getheartbeat();
-        long long gettimestamp();
-        void setAddress(Address&);
-        void setport(short port);
-        void setheartbeat(long hearbeat);
-        void settimestamp(long long timestamp);
-    	void setCurrentZone(boost::geometry::model::d2::point_xy<int> c1, boost::geometry::model::d2::point_xy<int> c2, 
-    	boost::geometry::model::d2::point_xy<int> c3, boost::geometry::model::d2::point_xy<int> c4);
-		Zone getCurrentZone();
-		short findMinDistance(boost::geometry::model::d2::point_xy<int> pt);
-    public:
-        short port;
         long heartbeat;
         long long timestamp;
         bool bDeleted;
-        Zone current_zone;
+        Zone zone;
+    
+    public:
+        MemberListEntry(Address&, long, long long);
+        MemberListEntry(Address&);
+        MemberListEntry(Address&, Zone zone);
+        MemberListEntry(Address&, long, long long, Zone zone);
+        MemberListEntry(): heartbeat(0), timestamp(0) {}
+        MemberListEntry(const MemberListEntry &anotherMLE);
+        MemberListEntry& operator =(const MemberListEntry&);
+    
+        Address& getAddress();
+        long getheartbeat();
+        long long gettimestamp();
+        Zone getZone();
+    
+        void setAddress(Address&);
+        void setheartbeat(long hearbeat);
+        void settimestamp(long long timestamp);
+    	void setZone(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
+                            boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4);
+		
+		short findMinDistance(boost_geometry::point_xy<short> pt);
 };
 
 #endif /* MEMBERLISTENTRY_HPP */

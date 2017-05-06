@@ -1,18 +1,10 @@
-//
-//  Server.hpp
-//  Content_Addressable_Network
-//
-//  Created by Shriram Joshi on 4/29/17.
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
-
 #ifndef Server_hpp
 #define Server_hpp
 
-#include "Server_Session.hpp"
-#include "Message.hpp"
 #include <queue>
 #include <boost/asio.hpp>
+#include "Server_Session.hpp"
+#include "Message.hpp"
 
 using boost::asio::ip::tcp;
 

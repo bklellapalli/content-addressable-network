@@ -1,30 +1,21 @@
-//
-//  MemberListEntry.cpp
-//  Content_Addressable_Network
-//
-//  Created by Shriram Joshi on 5/1/17
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
 
 /**********************************
  * FILE NAME: MemberListEntry.cpp
- *
- * DESCRIPTION: Definition of all Member related class
+ * 
+ * Created by Shriram Joshi on 5/1/17
+ * DESCRIPTION: Definition of all MemberListEntry related class
+ * 
+ * Copyright © 2017 Balakrishna. All rights reserved.
  **********************************/
 
 #include "MemberListEntry.hpp"
 #include "Member.hpp"
-#include <string>
-#include <sstream>
-#include <cstddef>
-#include <cstring>
 
 Address::Address(char addrAIn, char addrBIn, char addrCIn, char addrDIn, short portIn) :
 addrA(addrAIn), addrB(addrBIn), addrC(addrCIn), addrD(addrDIn), port(portIn) { }
 
 Address::Address(const Address &anotherAddress)
 {
-	// strcpy(addr, anotherAddress.addr);
 	addrA = anotherAddress.addrA;
 	addrB = anotherAddress.addrB;
 	addrC = anotherAddress.addrC;
@@ -37,7 +28,6 @@ Address::Address(const Address &anotherAddress)
  */
 Address& Address::operator =(const Address& anotherAddress)
 {
-	// strcpy(addr, anotherAddress.addr);
 	addrA = anotherAddress.addrA;
 	addrB = anotherAddress.addrB;
 	addrC = anotherAddress.addrC;
@@ -53,19 +43,15 @@ Address& Address::operator =(const Address& anotherAddress)
  */
 bool Address::operator ==(const Address& anotherAddress)
 {
-	return (addrA == anotherAddress.addrA && 
-		addrB == anotherAddress.addrB && 
-		addrC == anotherAddress.addrC && 
-		addrD == anotherAddress.addrD && 
-		port == anotherAddress.port);
+	return (addrA == anotherAddress.addrA && addrB == anotherAddress.addrB &&
+            addrC == anotherAddress.addrC && addrD == anotherAddress.addrD &&
+            port == anotherAddress.port);
 }
 
 std::string Address::to_string()
 {
-    return std::string(std::string(1, addrA) + "." +
-                       std::string(1, addrB) + "." +
-                       std::string(1, addrC) + "." +
-                       std::string(1, addrD));
+    return std::string(std::string(1, addrA) + "." + std::string(1, addrB) + "." +
+                       std::string(1, addrC) + "." + std::string(1, addrD));
 }
 
 std::string Address::port_to_string()
@@ -86,17 +72,18 @@ void Address::init()
 /**
  * Constructor
  */
-MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp): address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp), bDeleted(false){ }
+MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp): address(addr),
+                                 heartbeat(heartbeat), timestamp(timestamp), bDeleted(false){ }
 
 /**
  * Constuctor
  */
-MemberListEntry::MemberListEntry(Address& addr, short port): address(addr), port(port) { }
+MemberListEntry::MemberListEntry(Address& addr): address(addr) { }
 
-MemberListEntry::MemberListEntry(Address& addr, short port, Zone zone) : address(addr), port(port), current_zone(zone) { }
+MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(zone) { }
 
-MemberListEntry::MemberListEntry(Address& addr, short port, long heartbeat, long long timestamp, Zone zone) 
-	: address(addr), port(port), heartbeat(heartbeat), timestamp(timestamp), current_zone(zone) { }
+MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp, Zone zone)
+	: address(addr), heartbeat(heartbeat), timestamp(timestamp), zone(zone) { }
 
 /**
  * Copy constructor
@@ -105,7 +92,6 @@ MemberListEntry::MemberListEntry(const MemberListEntry &anotherMLE)
 {
     this->heartbeat = anotherMLE.heartbeat;
     this->address = anotherMLE.address;
-    this->port = anotherMLE.port;
     this->timestamp = anotherMLE.timestamp;
 }
 
@@ -117,105 +103,52 @@ MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE)
     MemberListEntry temp(anotherMLE);
     std::swap(heartbeat, temp.heartbeat);
     std::swap(address, temp.address);
-    std::swap(port, temp.port);
     std::swap(timestamp, temp.timestamp);
     return *this;
 }
 
-/**
- * FUNCTION NAME: getid
- *
- * DESCRIPTION: getter
- */
 Address& MemberListEntry::getAddress()
 {
     return address;
 }
 
-/**
- * FUNCTION NAME: getport
- *
- * DESCRIPTION: getter
- */
-short MemberListEntry::getport()
-{
-    return port;
-}
-
-/**
- * FUNCTION NAME: getheartbeat
- *
- * DESCRIPTION: getter
- */
 long MemberListEntry::getheartbeat()
 {
     return heartbeat;
 }
 
-/**
- * FUNCTION NAME: gettimestamp
- *
- * DESCRIPTION: getter
- */
 long long MemberListEntry::gettimestamp()
 {
     return timestamp;
 }
 
-/**
- * FUNCTION NAME: setid
- *
- * DESCRIPTION: setter
- */
+Zone MemberListEntry::getZone()
+{
+    return zone;
+}
+
 void MemberListEntry::setAddress(Address& addr)
 {
     this->address = addr;
 }
 
-/**
- * FUNCTION NAME: setport
- *
- * DESCRIPTION: setter
- */
-void MemberListEntry::setport(short port)
-{
-    this->port = port;
-}
-
-/**
- * FUNCTION NAME: setheartbeat
- *
- * DESCRIPTION: setter
- */
 void MemberListEntry::setheartbeat(long hearbeat)
 {
     this->heartbeat = hearbeat;
 }
 
-/**
- * FUNCTION NAME: settimestamp
- *
- * DESCRIPTION: setter
- */
 void MemberListEntry::settimestamp(long long timestamp)
 {
     this->timestamp = timestamp;
 }
 
-void MemberListEntry::setCurrentZone(boost::geometry::model::d2::point_xy<int> c1,
-                                     boost::geometry::model::d2::point_xy<int> c2,
-                                     boost::geometry::model::d2::point_xy<int> c3,
-                                     boost::geometry::model::d2::point_xy<int> c4)
+void MemberListEntry::setZone(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
+                              boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4)
 {
-    this->current_zone.setZone(c1, c2, c3, c4);
+    zone.setZone(c1, c2, c3, c4);
 }
 
-Zone MemberListEntry::getCurrentZone()
+short MemberListEntry::findMinDistance(boost_geometry::point_xy<short> pt)
 {
-    return current_zone;
-}
-
-short MemberListEntry::findMinDistance(boost::geometry::model::d2::point_xy<int> pt)
-{
-    return current_zone.minDistance(pt);
+    return zone.minDistance(pt);
 }

@@ -1,10 +1,12 @@
-//
-//  Server_Session.cpp
-//  Content_Addressable_Network
-//
-//  Created by Shriram Joshi on 5/1/17
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
+
+/**********************************
+ * FILE NAME: Server_Session.cpp
+ *
+ * Created by Shriram Joshi on 5/1/17
+ * DESCRIPTION: Definition of all Server_Session related class
+ *
+ * Copyright © 2017 Balakrishna. All rights reserved.
+ **********************************/
 
 #include "Server_Session.hpp"
 
@@ -30,8 +32,6 @@ void Server_Session::do_read(std::queue<q_elt>* mesQ)
                                 }
                                 do_read(mesQ);
                             });
-    //auto q_elt(buf.data(), max_length);
-    //mesQ.emplace(q_elt);
 }
 
 void Server_Session::do_write(std::size_t length) { }

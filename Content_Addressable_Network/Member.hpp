@@ -1,19 +1,16 @@
-//
-//  Member.hpp
-//  Content_Addressable_Network
-//
-//  Created by Shriram Joshi on 4/29/17.
-//  Copyright © 2017 Balakrishna. All rights reserved.
-//
-
 #ifndef MEMBER_HPP
 #define MEMBER_HPP
 
-#include "MemberListEntry.hpp"
-#include "Zone.hpp"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <queue>
+#include "MemberListEntry.hpp"
+#include "Zone.hpp"
+
+#define MIN_COORDINATE 1
+#define MAX_COORDINATE 100
+
+namespace boost_geometry = boost::geometry::model::d2;
 
 /**
  * CLASS NAME: Member
@@ -24,53 +21,32 @@
 class Member 
 {
     public:
-        // This member's Address
-        Address address;
-    
-        // send to address
+        std::string self_identifier;
+        Address self_address;
         Address send_to_address;
-    
-        // boolean indicating if this member is up
         bool inited;
-    
-        // boolean indicating if this member is in the group
         bool inGroup;
-    
-        // boolean indicating if this member has failed
         bool bFailed;
-    
-        // number of my neighbors
         int nnb;
-    
-        // the node's own heartbeat
         long heartbeat;
-    
-        // counter for next ping
         int pingCounter;
-    
-        // counter for ping timeout
         int timeOutCounter;
     
-        boost::geometry::model::d2::point_xy<int> point;
+        boost_geometry::point_xy<int> point;
+        Zone self_zone;
     
-        // Current Zone
-		Zone current_zone;
-		
-		// Membership table
-        std::vector<MemberListEntry> memberList;
-    
-        // My position in the membership table
+		std::vector<MemberListEntry> memberList;
         std::vector<MemberListEntry>::iterator myPos;
 	
     public:
         Member();
-		// copy constructor
 		Member(const Member &anotherMember) = delete;
-		// Assignment operator overloading
-		Member& operator =(const Member &anotherMember) = delete;
+        Member& operator =(const Member &anotherMember) = delete;
 		virtual ~Member();
-    	// Checks whether entry is my neighbour
         bool isNeighbour(MemberListEntry entry);
+    
+    private:
+        short generateRandomNumber();
 };
 
 #endif /* MEMBER_HPP */
