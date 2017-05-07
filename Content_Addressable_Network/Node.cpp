@@ -37,193 +37,211 @@ Node::~Node()
 
 void Node::recv() 
 {
-	while(!rcvMsgsQ->empty())
+	while(true)
 	{
-		char* data = (char*)rcvMsgsQ->front().getElement();
-		size_t size = rcvMsgsQ->front().getSize();
-		rcvMsgsQ->pop();
-		MessageHdr* hdr = (MessageHdr *)(data);
-		
-        switch(hdr->msgType)
+		if(!rcvMsgsQ->empty())
 		{
-			case HEARTBEAT:
+			const char* data = (char*)rcvMsgsQ->front().getElement().c_str();
+			size_t size = rcvMsgsQ->front().getSize();
+			MessageHdr* hdr = (MessageHdr *)(data);
+			//LOG_TRACE << "data received " << size;
+			switch(hdr->msgType)
 			{
-				std::vector<MemberListEntry> memberList;
-				getMemberList(memberList, data);
-				std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
-				std::vector<MemberListEntry>::iterator it_end = memberList.end();
-				for(; it_beg != it_end; ++it_beg) 
+				case HEARTBEAT:
 				{
-					insertEntry(this->memberList, (*it_beg).getAddress(), (*it_beg).heartbeat, (*it_beg).timestamp);
+					std::vector<MemberListEntry> memberList;
+					getMemberList(memberList, const_cast<char*>(data));
+					std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+					std::vector<MemberListEntry>::iterator it_end = memberList.end();
+					for(; it_beg != it_end; ++it_beg) 
+					{
+						insertEntry(this->memberList, (*it_beg).getAddress(), (*it_beg).heartbeat, (*it_beg).timestamp);
+					}
+					break;
 				}
-				break;
+				case JOINREQ:
+		        // Generate Random coordinate
+		        {
+		        	char addrA, addrB, addrC, addrD;
+	                short port;
+	                
+	                short xValue, yValue;
+		            memcpy(&xValue, (short*)(data + sizeof(MessageHdr) + (sizeof(char) * 4) + sizeof(short)), sizeof(short));
+		            memcpy(&yValue, (short*)(data + sizeof(MessageHdr) + (sizeof(char) * 4) + (sizeof(short) * 2)), sizeof(short));
+		            LOG_TRACE << "X : " << xValue << " Y : " << yValue;
+		            boost_geometry::point_xy<short> pt;
+		            boost::geometry::assign_values(pt, xValue, yValue);
+		            LOG_TRACE << "Point (X,Y)" << pt.x() << ", " << pt.y();
+		            
+		            if(self_zone.isCoordinateInZone(pt))
+		            {
+		                char addrA, addrB, addrC, addrD;
+		                short port;
+		                
+		                Zone new_zone = self_zone.splitZone();
+		                LOG_TRACE << "-------------------After Splitting--------------";
+		                LOG_TRACE << "Zone p1 " << self_zone.p1.x() << ", " << self_zone.p1.y();
+				        LOG_TRACE << "Zone p2 " << self_zone.p2.x() << ", " << self_zone.p2.y();
+				        LOG_TRACE << "Zone p3 " << self_zone.p3.x() << ", " << self_zone.p3.y();
+				        LOG_TRACE << "Zone p4 " << self_zone.p4.x() << ", " << self_zone.p4.y();
+		                memcpy(&addrA, (char*)(data + sizeof(MessageHdr)), sizeof(char));
+		                memcpy(&addrB, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 1), sizeof(char));
+		                memcpy(&addrC, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 2), sizeof(char));
+		                memcpy(&addrD, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 3), sizeof(char));
+		                memcpy(&port, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4), sizeof(short));
+		                Address addr(addrA, addrB, addrC, addrD, port);
+		        		
+		                // Send join reply message
+		                pushMessage(JOINREP, new_zone, addr.to_string(), addr.port_to_string());
+		                
+		                MemberListEntry entry(addr, new_zone);
+		                memberList.push_back(entry);
+		                memberList.erase(std::remove_if(memberList.begin(), memberList.end(),[this](MemberListEntry entry)
+		                {
+		                    return !isNeighbour(entry);
+		                }), memberList.end());
+					}
+					else
+		            {
+		            	
+		                short max_distance = MAX_COORDINATE;
+		                std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+		                std::vector<MemberListEntry>::iterator it_end = memberList.end();
+		                std::string ipAddress;
+		                std::string port;
+		                for(; it_beg != it_end; ++it_beg)
+		                {
+		                    short distance = (*it_beg).findMinDistance(pt);
+		                    if(distance < max_distance)
+		                    {
+		                        ipAddress =  (*it_beg).getAddress().to_string();
+		                        port = (*it_beg).getAddress().port_to_string();
+		                    }
+		                }
+		                std::string sData(&data[0], &data[0] + size);
+		                q_elt element(sData, size);
+		                auto addr = std::make_pair(ipAddress, port);
+		                auto sndMsg = std::make_pair(addr, element);
+		                sndMsgsQ->push(sndMsg);
+		            }
+		        }
+		        break;
+		            
+		        case JOINREP:
+		        {
+		            short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
+		            memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                              sizeof(short)), sizeof(short));
+		            memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                          sizeof(short) * 2), sizeof(short));
+		            
+		            memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 3), sizeof(short));
+		            memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 4), sizeof(short));
+		            
+		            memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 5), sizeof(short));
+		            memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 6), sizeof(short));
+		            
+		            memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 7), sizeof(short));
+		            memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                               sizeof(short) * 8), sizeof(short));
+		            
+		            boost::geometry::assign_values(self_zone.p1, p1_x, p1_y);
+		            boost::geometry::assign_values(self_zone.p2, p2_x, p2_y);
+		            boost::geometry::assign_values(self_zone.p3, p3_x, p3_y);
+		            boost::geometry::assign_values(self_zone.p4, p4_x, p4_y);
+		            
+		            getMemberList(memberList, const_cast<char*>(data));
+		        }
+		            break;
+		            
+		        case LEAVEREQ:
+		        {
+		            short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
+		            memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short)), sizeof(short));
+		            memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 2), sizeof(short));
+		            
+		            memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 3), sizeof(short));
+		            memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 4), sizeof(short));
+		            
+		            memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 5), sizeof(short));
+		            memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 6), sizeof(short));
+		            
+		            memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 7), sizeof(short));
+		            memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+		                                   sizeof(short) * 8), sizeof(short));
+		            
+		            Zone newZone;
+		            boost::geometry::assign_values(newZone.p1, p1_x, p1_y);
+		            boost::geometry::assign_values(newZone.p2, p2_x, p2_y);
+		            boost::geometry::assign_values(newZone.p3, p3_x, p3_y);
+		            boost::geometry::assign_values(newZone.p4, p4_x, p4_y);
+		            
+		            //Merge Zone
+		            self_zone.mergeZone(newZone);
+		            
+		            // update membership list
+		            getMemberList(memberList, const_cast<char*>(data));
+		        }
+		            break;
+				
+		        case SEARCHFILE:
+		            break;
+				
+		        case SENDFILE:
+		            break;
+				
+		        default:
+		            break;
 			}
-			case JOINREQ:
-            // Generate Random coordinate
-            {
-                short xValue, yValue;
-                memcpy(&xValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), sizeof(short));
-                memcpy(&yValue, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), sizeof(short));
-                
-                boost_geometry::point_xy<short> pt;
-                boost::geometry::assign_values(pt, xValue, yValue);
-                
-                if(self_zone.isCoordinateInZone(pt))
-                {
-                    char addrA, addrB, addrC, addrD;
-                    short port;
-                    
-                    Zone new_zone = self_zone.splitZone();
-                    memcpy(&addrA, (char*)(data + sizeof(MessageHdr)), sizeof(char));
-                    memcpy(&addrB, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 1), sizeof(char));
-                    memcpy(&addrC, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 2), sizeof(char));
-                    memcpy(&addrD, (char*)(data + sizeof(MessageHdr) + sizeof(char) * 3), sizeof(char));
-                    memcpy(&port, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4), sizeof(short));
-                    Address addr(addrA, addrB, addrC, addrD, port);
-            
-                    // Send join reply message
-                    pushMessage(JOINREP, new_zone, addr.to_string(), addr.port_to_string());
-                    
-                    MemberListEntry entry(addr, new_zone);
-                    memberList.push_back(entry);
-                    memberList.erase(std::remove_if(memberList.begin(), memberList.end(),[this](MemberListEntry entry)
-                    {
-                        return !isNeighbour(entry);
-                    }), memberList.end());
-				}
-				else
-                {
-                    short max_distance = MAX_COORDINATE;
-                    std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
-                    std::vector<MemberListEntry>::iterator it_end = memberList.end();
-                    std::string ipAddress;
-                    std::string port;
-                    for(; it_beg != it_end; ++it_beg)
-                    {
-                        short distance = (*it_beg).findMinDistance(pt);
-                        if(distance < max_distance)
-                        {
-                            ipAddress =  (*it_beg).getAddress().to_string();
-                            port = (*it_beg).getAddress().port_to_string();
-                        }
-                    }
-                    q_elt element(data, size);
-                    auto addr = std::make_pair(ipAddress, port);
-                    auto sndMsg = std::make_pair(addr, element);
-                    sndMsgsQ->push(sndMsg);
-                }
-            }
-            break;
-                
-            case JOINREP:
-            {
-                short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
-                memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                  sizeof(short)), sizeof(short));
-                memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                              sizeof(short) * 2), sizeof(short));
-                
-                memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 3), sizeof(short));
-                memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 4), sizeof(short));
-                
-                memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 5), sizeof(short));
-                memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 6), sizeof(short));
-                
-                memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 7), sizeof(short));
-                memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                                   sizeof(short) * 8), sizeof(short));
-                
-                boost::geometry::assign_values(self_zone.p1, p1_x, p1_y);
-                boost::geometry::assign_values(self_zone.p2, p2_x, p2_y);
-                boost::geometry::assign_values(self_zone.p3, p3_x, p3_y);
-                boost::geometry::assign_values(self_zone.p4, p4_x, p4_y);
-                
-                getMemberList(memberList, data);
-            }
-                break;
-                
-            case LEAVEREQ:
-            {
-                short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
-                memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short)), sizeof(short));
-                memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 2), sizeof(short));
-                
-                memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 3), sizeof(short));
-                memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 4), sizeof(short));
-                
-                memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 5), sizeof(short));
-                memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 6), sizeof(short));
-                
-                memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 7), sizeof(short));
-                memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
-                                       sizeof(short) * 8), sizeof(short));
-                
-                Zone newZone;
-                boost::geometry::assign_values(newZone.p1, p1_x, p1_y);
-                boost::geometry::assign_values(newZone.p2, p2_x, p2_y);
-                boost::geometry::assign_values(newZone.p3, p3_x, p3_y);
-                boost::geometry::assign_values(newZone.p4, p4_x, p4_y);
-                
-                //Merge Zone
-                self_zone.mergeZone(newZone);
-                
-                // update membership list
-                getMemberList(memberList, data);
-            }
-                break;
-		    
-            case SEARCHFILE:
-                break;
-		    
-            case SENDFILE:
-                break;
-		    
-            default:
-                break;
+			rcvMsgsQ->pop();
 		}
 	}
 }
 
 void Node::sendLoop()
 {
-	while(!sndMsgsQ->empty())
+	while(true)
 	{
-	    boost::asio::io_service io_service;
-	    char* data = (char*)sndMsgsQ->front().second.getElement();
-	    std::string address = sndMsgsQ->front().first.first;
-        std::string port = sndMsgsQ->front().first.second;
-	    MessageHdr* hdr = (MessageHdr *)(data);
-	    if(hdr->msgType == HEARTBEAT)
-	    {
-	    	std::vector<MemberListEntry> memberList = this->memberList;
-	        std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
-	        std::vector<MemberListEntry>::iterator it_end = memberList.end();
-	        for(; it_beg != it_end; ++it_beg)
-	        {
-	            std::string address = (*it_beg).getAddress().to_string();
-	            std::string port = (*it_beg).getAddress().port_to_string();
-	            Client client(io_service, address, port);
-	            client.write(data);
-	        }
-	    }
-	    else
-	    {
-	        Client client(io_service, address, port);
-	        client.write(data);
-	    }
-	    sndMsgsQ->pop();
+		if(!sndMsgsQ->empty())
+		{
+			boost::asio::io_service io_service;
+			const char* data = (char*)sndMsgsQ->front().second.getElement().c_str();
+			int size = 0;
+			std::string address = sndMsgsQ->front().first.first;
+		    std::string port = sndMsgsQ->front().first.second;
+		    MessageHdr* hdr = (MessageHdr *)(data);
+			if(hdr->msgType == HEARTBEAT)
+			{
+				std::vector<MemberListEntry> memberList = this->memberList;
+			    std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+			    std::vector<MemberListEntry>::iterator it_end = memberList.end();
+			    for(; it_beg != it_end; ++it_beg)
+			    {
+			        std::string address = (*it_beg).getAddress().to_string();
+			        std::string port = (*it_beg).getAddress().port_to_string();
+			        Client client(io_service, address, port);
+			        client.write(sndMsgsQ->front().second.getElement());
+			    }
+			}
+			else
+			{
+				Client client(io_service, address, port);
+			    client.write(sndMsgsQ->front().second.getElement());
+			}
+			sndMsgsQ->pop();
+		}
 	}
 }
 
@@ -248,7 +266,7 @@ size_t Node::size_of_message(MsgType type)
 
 void Node::pushMessage(MsgType type, Zone zone, std::string toAddr, std::string toPort)
 {
-    size_t size = size_of_message(type);
+	size_t size = size_of_message(type);
     
     char* ptr = (char *) malloc(size * sizeof(char));
     MessageHdr* header = (MessageHdr *)ptr;
@@ -262,8 +280,8 @@ void Node::pushMessage(MsgType type, Zone zone, std::string toAddr, std::string 
     
     if(type == JOINREQ)
     {
-        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &point.x(), sizeof(short));
-        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &point.y(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + (sizeof(char) * 4) + sizeof(short)), &point.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + (sizeof(char) * 4) + sizeof(short) * 2), &point.y(), sizeof(short));
     }
     if(type == JOINREP || type == LEAVEREQ)
     {
@@ -283,11 +301,12 @@ void Node::pushMessage(MsgType type, Zone zone, std::string toAddr, std::string 
         memcpy((char*)(ptr +sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 9), &size_membership_list, sizeof(short));
         fillMemberShipList((char *)ptr);
     }
-    
-    q_elt element(ptr, size);
+    std::string data(&ptr[0], &ptr[0] + size);
+    q_elt el(data, size);
     auto addr = std::make_pair(toAddr, toPort);
-    auto sndMsg = std::make_pair(addr, element);
+    auto sndMsg = std::make_pair(addr, el);
     sndMsgsQ->push(sndMsg);
+    
 }
 
 void Node::displayInfo()
@@ -476,40 +495,45 @@ void Node::init_mem_protocol(void)
 		}
 		
 		//send membership list to neighbours
-		std::set<int> vec_receivers;
-		std::set<int>::iterator it;
-	  	std::pair<std::set<int>::iterator,bool> ret;
-		short rand_receivers = getRandomReceivers();
-		//Increment self heat beat by before sending to neighbours
-		memberList.at(0).heartbeat++;
-		for(int i = 0; i < rand_receivers; ++i) 
+		if(memberList.size() > 0)
 		{
-			int rand_rcvr = getRandomReceivers() % memberList.size();
-			ret = vec_receivers.insert(rand_rcvr);
-			//No receiver gets heartbeat twice
-			if(ret.second != false) 
+			std::set<int> vec_receivers;
+			std::set<int>::iterator it;
+		  	std::pair<std::set<int>::iterator,bool> ret;
+			short rand_receivers = getRandomReceivers();
+			//Increment self heat beat by before sending to neighbours
+			memberList.at(0).heartbeat++;
+			for(int i = 0; i < rand_receivers; ++i) 
 			{
-				MemberListEntry receiver = memberList.at(rand_rcvr);
-				Address to(receiver.getAddress());
-				//No self messaging
-				//No self messaging
-				if(!(to == this->self_address))
+				int rand_rcvr = getRandomReceivers() % memberList.size();
+				ret = vec_receivers.insert(rand_rcvr);
+				//No receiver gets heartbeat twice
+				if(ret.second != false) 
 				{
-					size_t msgsize = size_of_message(HEARTBEAT);
-					MessageHdr* msg = (MessageHdr *) calloc(msgsize, sizeof(char));
-					msg->msgType = HEARTBEAT;
-					memcpy((char *)(msg + 1), &self_address.addrA, sizeof(char));
-					memcpy((char *)(msg + 1 + sizeof(char)), &self_address.addrA, sizeof(char));
-					memcpy((char *)(msg + 1 + sizeof(char)  * 2), &self_address.addrA, sizeof(char));
-					memcpy((char *)(msg + 1 + sizeof(char) * 3), &self_address.addrA, sizeof(char));
-					memcpy((char* )(msg + 1) + sizeof(char) * 4, &self_address.port, sizeof(short));
-					short numListEntries = (short)memberList.size();
-					memcpy((char* )(msg + 1) + sizeof(char) * 4 + sizeof(short), &numListEntries, sizeof(short));
-					fillMemberShipList((char*)msg);
-					auto addressPair = std::make_pair(this->self_address.to_string(), this->self_address.port_to_string());
-					q_elt el(msg, msgsize);
-					auto sndMsg = std::make_pair(addressPair, el);
-					sndMsgsQ->push(sndMsg);
+					MemberListEntry receiver = memberList.at(rand_rcvr);
+					Address to(receiver.getAddress());
+					//No self messaging
+					//No self messaging
+					if(!(to == this->self_address))
+					{
+						size_t msgsize = size_of_message(HEARTBEAT);
+						MessageHdr* msg = (MessageHdr *) calloc(msgsize, sizeof(char));
+						msg->msgType = HEARTBEAT;
+						memcpy((char *)(msg + 1), &self_address.addrA, sizeof(char));
+						memcpy((char *)(msg + 1 + sizeof(char)), &self_address.addrA, sizeof(char));
+						memcpy((char *)(msg + 1 + sizeof(char)  * 2), &self_address.addrA, sizeof(char));
+						memcpy((char *)(msg + 1 + sizeof(char) * 3), &self_address.addrA, sizeof(char));
+						memcpy((char* )(msg + 1) + sizeof(char) * 4, &self_address.port, sizeof(short));
+						short numListEntries = (short)memberList.size();
+						memcpy((char* )(msg + 1) + sizeof(char) * 4 + sizeof(short), &numListEntries, sizeof(short));
+						fillMemberShipList((char*)msg);
+						auto addressPair = std::make_pair(this->self_address.to_string(), this->self_address.port_to_string());
+						const char* buf = (const char*)msg;
+						std::string sBuf(&buf[0], &buf[0] + msgsize);
+						q_elt el(sBuf, msgsize);
+						auto sndMsg = std::make_pair(addressPair, el);
+						sndMsgsQ->push(sndMsg);
+					}
 				}
 			}
 		}
@@ -569,11 +593,14 @@ int main(int argc, char* argv[])
 	{
 		std::cerr << "Node <port>" << std::endl;
 	}
-	
 	boost::asio::io_service io_service;
-	boost::thread t1([&io_service](){io_service.run();});
-	Node node(io_service, atoi(argv[1]));
+    Node node(io_service, atoi(argv[1]));
+    boost::thread t([&io_service](){io_service.run();});
+    boost::thread t1(boost::bind(&Node::init_mem_protocol, &node));
+    
+	LOG_TRACE << "Server up & starting";
 	boost::thread t2(boost::bind(&Node::recv, &node));
+	boost::thread t4(boost::bind(&Node::sendLoop, &node));
 	
 	std::string response;
 	std::cout << "Do you want to join Network[yes/no] : ";
@@ -593,14 +620,14 @@ int main(int argc, char* argv[])
     }
 	else
 	{
-		node.inGroup = true;
+		//node.inGroup = true;
 	}
     
 	boost::thread t3(boost::bind(&Node::init_mem_protocol, &node));
-	boost::thread t4(boost::bind(&Node::sendLoop, &node));
-    boost::thread t5(boost::bind(&Node::accept_user_input, &node));
-    
+	boost::thread t5(boost::bind(&Node::accept_user_input, &node));
     t1.join();
+	t.join();
+    //t1.join();
     t2.join();
 	t3.join();
 	t4.join();

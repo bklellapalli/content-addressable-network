@@ -12,7 +12,7 @@
 
 Zone::Zone()
 {
-    boost::geometry::assign_values(p1, 0, 1);
+    boost::geometry::assign_values(p1, 0, 0);
     boost::geometry::assign_values(p2, 100, 0);
     boost::geometry::assign_values(p3, 100, 100);
     boost::geometry::assign_values(p4, 0, 100);

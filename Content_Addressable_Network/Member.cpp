@@ -9,6 +9,7 @@
  **********************************/
 
 #include "Member.hpp"
+#include "Logger.hpp"
 #include <ctime>
 #include <boost/random.hpp>
 #include <sys/types.h>
@@ -33,6 +34,7 @@ Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbe
     short x_axis = generateRandomNumber();
     short y_axis = generateRandomNumber();
     boost::geometry::assign_values(point, x_axis, y_axis);
+    LOG_TRACE << point.x() << " , " << point.y();
 }
 
 /*
@@ -66,7 +68,9 @@ std::string Member::getLocalIpAddress()
             char addressBuffer[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
             std::string addrBuf(addressBuffer);
-            if(addrBuf.compare("127.0.0.1") != 0) {
+            
+            if(addrBuf.compare("127.0.0.1") != 0 && addrBuf.compare("1.1.1.1") != 0) {
+            	//std::cout << "Debug " << addrBuf << std::endl;
             	if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
             	return addrBuf;
             }

@@ -4,7 +4,7 @@
 #include "Server.hpp"
 #include "Member.hpp"
 #include "Message.hpp"
-#include "Message.hpp"
+#include "Logger.hpp"
 #include <boost/asio.hpp>
 #include <utility>
 

@@ -10,11 +10,13 @@
 
 #include <boost/bind.hpp>
 #include "Server.hpp"
+#include "Logger.hpp"
 
 Server::Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>* mesQ) 
 	: endpoint{tcp::v4(), static_cast<unsigned short>(port)}, acc{io_service, endpoint}, socket{io_service}
 {
-    run(mesQ);
+	LOG_TRACE << "Server running";
+	run(mesQ);
 }
 
 Server::~Server()
@@ -25,12 +27,13 @@ Server::~Server()
 void Server::run(std::queue<q_elt>* mesQ)
 {
     acc.async_accept(socket,
-	 [this, mesQ](boost::system::error_code ec)
-	 {
-		 if (!ec)
-		 {
-		     std::make_shared<Server_Session>(std::move(socket))->start(mesQ);
-		 }
-		 run(mesQ);
-	 });
+     [this, mesQ](boost::system::error_code ec)
+     {
+         if (!ec)
+         {
+             auto s = std::make_shared<Server_Session>(std::move(socket));
+             s->start(mesQ);
+         }
+         run(mesQ);
+     });
 }
