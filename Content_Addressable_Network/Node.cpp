@@ -200,26 +200,26 @@ void Node::sendLoop()
 	    sndMsgsQ->pop();
 	    MessageHdr* hdr = (MessageHdr *)(data);
 	    
-        if(hdr->msgType == JOINREQ || hdr->msgType == JOINREP)
-	    {
-	        std::string address = send_to_address.to_string();
-	        std::string port = send_to_address.port_to_string();
-	        Client client(io_service, address, port);
-	        client.write(data);
-	    }
-	    else
-	    {
-	        std::vector<MemberListEntry> memberList = this->memberList;
-	        std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
-	        std::vector<MemberListEntry>::iterator it_end = memberList.end();
-	        for(; it_beg != it_end; ++it_beg)
-	        {
-	            std::string address = (*it_beg).getAddress().to_string();
-	            std::string port = (*it_beg).getAddress().port_to_string();
-	            Client client(io_service, address, port);
-	            client.write(data);
-	        }
-	    }
+        if(hdr->msgType == HEARTBEAT)
+        {
+            std::vector<MemberListEntry> memberList = this->memberList;
+            std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+            std::vector<MemberListEntry>::iterator it_end = memberList.end();
+            for(; it_beg != it_end; ++it_beg)
+            {
+                std::string address = (*it_beg).getAddress().to_string();
+                std::string port = (*it_beg).getAddress().port_to_string();
+                Client client(io_service, address, port);
+                client.write(data);
+            }
+        }
+        else
+        {
+            std::string address = send_to_address.to_string();
+            std::string port = send_to_address.port_to_string();
+            Client client(io_service, address, port);
+            client.write(data);
+        }
 	}
 }
 
