@@ -280,13 +280,6 @@ void Node::pushMessage(MsgType type, Zone zone)
         memcpy((char*)(ptr +sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 9), &size_membership_list, sizeof(short));
         fillMemberShipList((char *)ptr);
     }
-    if(type == LEAVEREQ)
-    {
-        memberList.erase(std::remove_if(memberList.begin(), memberList.end(),[this](MemberListEntry entry)
-                                    {
-                                        return !self_zone.canMergeZone(entry.getZone());
-                                    }), memberList.end());
-    }
     q_elt element(ptr, (int)size);
     sndMsgsQ->push(element);
 }
@@ -359,8 +352,18 @@ void Node::accept_user_input()
                     std::cout << "\n******* Disconnected ********\n" << std::endl;
                     break;
                 }
-                pushMessage(LEAVEREQ, self_zone);
-                inGroup = false;
+                std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+                std::vector<MemberListEntry>::iterator it_end = memberList.end();
+                for(; it_beg != it_end; ++it_beg)
+                {
+                    if(self_zone.canMergeZone((*it_beg).getZone()))
+                    {
+                        send_to_address = (*it_beg).getAddress();
+                        pushMessage(LEAVEREQ, self_zone);
+                        inGroup = false;
+                        break;
+                    }
+                }
                 std::cout << "\n******* Disconnected ********\n" << std::endl;
             }
                 break;
