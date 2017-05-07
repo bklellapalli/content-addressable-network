@@ -1,13 +1,3 @@
-
-/**********************************
- * FILE NAME: Logger.cpp
- *
- * Created by Shriram Joshi on 5/5/17
- * DESCRIPTION: BOOST_LOG_GLOBAL_LOGGER_INIT
- *
- * Copyright © 2017 Balakrishna. All rights reserved.
- **********************************/
-
 #include "Logger.hpp"
 #include <boost/log/core/core.hpp>
 #include <boost/log/expressions/formatters/date_time.hpp>
@@ -71,3 +61,12 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
     return logger;
 }
 
+/*int main()
+{
+	LOG_TRACE << "this is a trace message";
+  LOG_DEBUG << "this is a debug message";
+  LOG_WARNING << "this is a warning message";
+  LOG_ERROR << "this is an error message";
+LOG_FATAL << "this is a fatal error message";
+	return 0;
+}*/

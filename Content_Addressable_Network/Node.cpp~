@@ -7,37 +7,36 @@
  *
  * Copyright © 2017 Balakrishna. All rights reserved.
  **********************************/
- 
-#include "Node.hpp"
-#include "Message.hpp"
-#include "Client.hpp"
-#include <boost/thread.hpp>
-#include <boost/chrono.hpp>
-#include <boost/random.hpp>
+
 #include <cstdlib>
 #include <vector>
 #include <set>
 #include <iostream>
+#include <boost/thread.hpp>
+#include <boost/chrono.hpp>
+#include <boost/random.hpp>
+
+#include "Node.hpp"
+#include "Message.hpp"
+#include "Client.hpp"
 
 Node::Node(boost::asio::io_service& io_service, int port)
 {
-    sndMsgsQ = new std::queue<std::pair<std::pair<std::string, std::string>, q_elt>>();
+    sndMsgsQ = new std::queue<q_elt>();
     rcvMsgsQ = new std::queue<q_elt>();
     server = new Server{io_service, port, rcvMsgsQ};
-    self_address.init(this->getLocalIpAddress(), port);
 }
 
 Node::~Node()
 {
 	delete sndMsgsQ;
 	delete rcvMsgsQ;
-	//io_service.close();
 	delete server;
 }
 
 void Node::recv() 
 {
-	while(!rcvMsgsQ->empty())
+	if(!rcvMsgsQ->empty())
 	{
 		char* data = (char*)rcvMsgsQ->front().getElement();
 		size_t size = rcvMsgsQ->front().getSize();
@@ -82,7 +81,8 @@ void Node::recv()
                     Address addr(addrA, addrB, addrC, addrD, port);
             
                     // Send join reply message
-                    pushMessage(JOINREP, new_zone, addr.to_string(), addr.port_to_string());
+                    send_to_address =  addr;
+                    pushMessage(JOINREP, new_zone);
                     
                     MemberListEntry entry(addr, new_zone);
                     memberList.push_back(entry);
@@ -232,13 +232,13 @@ size_t Node::size_of_message(MsgType type)
     size_t msgsize = sizeof(MessageHdr) + (4 * sizeof(char) ) + sizeof(short) + sizeof(char);
     if(type == JOINREQ)
     {
-        msgsize += (2 * sizeof(short));	//Requester's X & Y coordinates
+        msgsize += (2 * sizeof(short));
     }
-    else if(type == HEARTBEAT)
+    if(type == HEARTBEAT)
     {
     	msgsize += sizeof(short)/*number of entrie in member_list*/ + sizeof(MemberListEntry) * memberList.size();
     }
-    else if(type == JOINREP)
+    if(type == JOINREP)
     {
         msgsize += sizeof(short) * 8;
         msgsize += sizeof(short) + sizeof(MemberListEntry) * memberList.size();
@@ -246,14 +246,15 @@ size_t Node::size_of_message(MsgType type)
     return msgsize;
 }
 
-void Node::pushMessage(MsgType type, Zone zone, std::string toAddr, std::string toPort)
+void Node::pushMessage(MsgType type, Zone zone)
 {
+    MessageHdr* header = (MessageHdr *) malloc(sizeof(MessageHdr) * sizeof(char));
     size_t size = size_of_message(type);
     
     char* ptr = (char *) malloc(size * sizeof(char));
-    MessageHdr* header = (MessageHdr *)ptr;
     header->msgType = type;
     
+    memcpy((char*)ptr, &header->msgType, sizeof(MessageHdr));
     memcpy((char*)(ptr + sizeof(MessageHdr)), &this->self_address.addrA, sizeof(char));
     memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 1), &self_address.addrB, sizeof(char));
     memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 2), &self_address.addrC, sizeof(char));
@@ -283,11 +284,8 @@ void Node::pushMessage(MsgType type, Zone zone, std::string toAddr, std::string 
         memcpy((char*)(ptr +sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 9), &size_membership_list, sizeof(short));
         fillMemberShipList((char *)ptr);
     }
-    
-    q_elt element(ptr, size);
-    auto addr = std::make_pair(toAddr, toPort);
-    auto sndMsg = std::make_pair(addr, element);
-    sndMsgsQ->push(sndMsg);
+    q_elt element(ptr, (int)size);
+    sndMsgsQ->push(element);
 }
 
 void Node::displayInfo()
@@ -307,8 +305,8 @@ void Node::displayInfo()
 void Node::accept_user_input()
 {
     Zone zone;
-    std::string ipAddress;
-    std::string port;
+    char ipAddress[16];
+    short port = 0;
     short option = 0;
     
     while(true)
@@ -334,12 +332,26 @@ void Node::accept_user_input()
                 std::cout << "\nPort: ";
                 std::cin >> port;
                 
-                pushMessage(JOINREQ, zone, ipAddress, port);
+                char *token;
+                token = std::strtok(ipAddress, ".");
+                memcpy(&send_to_address.addrA, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrB, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrC, token, sizeof(char));
+                
+                token = strtok(NULL, ".");
+                memcpy(&send_to_address.addrD, token, sizeof(char));
+                
+                memcpy(&send_to_address.port, &port, sizeof(short));
+                pushMessage(JOINREQ, zone);
                 inGroup = true;
                 break;
             case 2:
             {
-                if(!inGroup)
+                if(inGroup)
                 {
                     std::cout << "\n******* Disconnected ********\n" << std::endl;
                     break;
@@ -350,9 +362,8 @@ void Node::accept_user_input()
                 {
                     if(self_zone.canMergeZone((*it_beg).getZone()))
                     {
-                        std::string addr = (*it_beg).getAddress().to_string();
-                        std::string port = (*it_beg).getAddress().port_to_string();
-                        pushMessage(LEAVEREQ, self_zone, addr, port);
+                        send_to_address = (*it_beg).getAddress();
+                        pushMessage(LEAVEREQ, self_zone);
                         inGroup = false;
                         break;
                     }
@@ -374,9 +385,7 @@ void Node::getMemberList(std::vector<MemberListEntry>& memberList, char* data, b
 	short size = 0;
 	memcpy(&size, (short *)ptr , sizeof(short));
     ptr += sizeof(short);
-
 	for(int i = 0; i < size; ++i) {
-	
 		MemberListEntry entry;
 		memcpy(&entry.getAddress().addrA, (char*)(ptr), sizeof(char));
 		memcpy(&entry.getAddress().addrB, (char*)(ptr + sizeof(char)), sizeof(char));
@@ -384,21 +393,8 @@ void Node::getMemberList(std::vector<MemberListEntry>& memberList, char* data, b
 		memcpy(&entry.getAddress().addrD, (char*)(ptr + sizeof(char) * 3), sizeof(char));
 		memcpy(&entry.getAddress().port, (short*)(ptr + sizeof(char) * 4), sizeof(short));
 		memcpy(&entry.heartbeat, (long*)(ptr + sizeof(char) * 4 + sizeof(short)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + sizeof(char) * 4 + sizeof(short) + sizeof(long)), sizeof(long long));
-        
-        /*memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long) + sizeof(long long)), sizeof(long));
-		memcpy(&entry.timestamp, (long long*)(ptr + (sizeof(char) * 4) + sizeof(short) + sizeof(long)), sizeof(long));
-        */
-        
-        if(isNeighbour(entry))
-        	this->insertEntry(memberList, entry.getAddress(), entry.getheartbeat(), entry.gettimestamp());
-		
+		memcpy(&entry.timestamp, (long*)(ptr + sizeof(char) * 4 + sizeof(short) + sizeof(long)), sizeof(long));
+        this->insertEntry(memberList, entry.getAddress(), entry.getheartbeat(), entry.gettimestamp());
         ptr += sizeof(char) + sizeof(char) + sizeof(char) + sizeof(char) + sizeof(short) + 2 * sizeof(long);
 	}
 	return;
@@ -410,14 +406,12 @@ void Node::getMemberList(std::vector<MemberListEntry>& memberList, char* data, b
  * DESCRIPTION: Creates member list entry & inserts into vector
 */
 void Node::insertEntry(std::vector<MemberListEntry>& memberList, Address& address, long heartbeat, long long timestamp) {
-	std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
+	
+    std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
 	std::vector<MemberListEntry>::iterator it_end = memberList.end();
 	MemberListEntry entry(address, heartbeat, timestamp);
 	
-	if(address == (*it_beg).getAddress())
-	{
-		return;
-	}
+    if(address == (*it_beg).getAddress()) return;
 	if(it_beg == it_end) 
 	{
 		entry.timestamp = boost::chrono::duration_cast<boost::chrono::milliseconds>
@@ -455,20 +449,23 @@ void Node::insertEntry(std::vector<MemberListEntry>& memberList, Address& addres
 		entry.timestamp = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::system_clock::now().time_since_epoch()).count();
 		memberList.push_back(entry);
 	}
-	return;
 }
 
 void Node::init_mem_protocol(void)
 {
 	while(true)
 	{
+		//First receive message
+		recv();
+		
 		//First check if any removable node
 		std::vector<MemberListEntry>::iterator it_beg = memberList.begin();
 		std::vector<MemberListEntry>::iterator it_end = memberList.end();
 		for(; it_beg != it_end; ++it_beg) 
 		{
 			MemberListEntry entry = *it_beg++; //first entry is self node in memberlist
-			long long curtime =  boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::system_clock::now().time_since_epoch()).count();
+			long long curtime =  boost::chrono::duration_cast<boost::chrono::milliseconds>
+                                    (boost::chrono::system_clock::now().time_since_epoch()).count();
 			if((curtime - entry.timestamp) > (TREMOVE + TFAIL)) 
 			{
 				(*it_beg).bDeleted = true;
@@ -492,7 +489,6 @@ void Node::init_mem_protocol(void)
 				MemberListEntry receiver = memberList.at(rand_rcvr);
 				Address to(receiver.getAddress());
 				//No self messaging
-				//No self messaging
 				if(!(to == this->self_address))
 				{
 					size_t msgsize = size_of_message(HEARTBEAT);
@@ -506,13 +502,10 @@ void Node::init_mem_protocol(void)
 					short numListEntries = (short)memberList.size();
 					memcpy((char* )(msg + 1) + sizeof(char) * 4 + sizeof(short), &numListEntries, sizeof(short));
 					fillMemberShipList((char*)msg);
-					auto addressPair = std::make_pair(this->self_address.to_string(), this->self_address.port_to_string());
-					q_elt el(msg, msgsize);
-					auto sndMsg = std::make_pair(addressPair, el);
-					sndMsgsQ->push(sndMsg);
 				}
 			}
 		}
+		//sleep(3);
 	}
 }
 
@@ -554,7 +547,7 @@ void Node::fillMemberShipList(char* msg)
 	}
 }
 
-short Node::getRandomReceivers(void) 
+int Node::getRandomReceivers(void)
 {
 	int max = memberList.size() - 1;
 	std::time_t now = std::time(0);
@@ -568,43 +561,20 @@ int main(int argc, char* argv[])
 	if(argc != 2)
 	{
 		std::cerr << "Node <port>" << std::endl;
+        return -1;
 	}
 	
-	boost::asio::io_service io_service;
-	boost::thread t1([&io_service](){io_service.run();});
+    boost::asio::io_service io_service;
 	Node node(io_service, atoi(argv[1]));
-	boost::thread t2(boost::bind(&Node::recv, &node));
-	
-	std::string response;
-	std::cout << "Do you want to join Network[yes/no] : ";
-	std::cin >> response;
-	if(response.compare("yes") == 0 || response.compare("Yes") == 0 || response.compare("YES") == 0)
-	{
-		std::string ipAddress;
-		std::string port;
-		std::cout << "Ip Address of server: ";
-        std::cin >> ipAddress;
-        std::cout << "Port: ";
-        std::cin >> port;
-        Zone zone;
-        node.pushMessage(JOINREQ, zone, ipAddress, port);
-        while(!node.inGroup)
-        	continue;
-    }
-	else
-	{
-		node.inGroup = true;
-	}
-    
-	boost::thread t3(boost::bind(&Node::init_mem_protocol, &node));
-	boost::thread t4(boost::bind(&Node::sendLoop, &node));
-    boost::thread t5(boost::bind(&Node::accept_user_input, &node));
+    boost::thread t1([&io_service](){io_service.run();});
+	boost::thread t2(boost::bind(&Node::init_mem_protocol, &node));
+	boost::thread t3(boost::bind(&Node::sendLoop, &node));
+    boost::thread t4(boost::bind(&Node::accept_user_input, &node));
     
     t1.join();
     t2.join();
 	t3.join();
 	t4.join();
-	t5.join();
 	
 	return 0;
 }

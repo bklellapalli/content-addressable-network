@@ -26,8 +26,8 @@ server.o: Server.hpp Server.cpp Message.hpp
 client.o: Client.hpp
 	g++ Client.cpp -c -o client.o ${BOOST_SYSTEM} ${DLLS} ${CFLAGS}
 
-member.o: Member.cpp memberlistentry.o zone.o coordinates.o 
-	g++ memberlistentry.o zone.o coordinates.o Member.cpp -c -o member.o ${CFLAGS}
+member.o: Member.cpp memberlistentry.o zone.o 
+	g++ memberlistentry.o zone.o Member.cpp -c -o member.o ${CFLAGS}
 	
 memberlistentry.o: MemberListEntry.cpp MemberListEntry.hpp
 	g++ MemberListEntry.cpp -c -o memberlistentry.o ${CFLAGS}

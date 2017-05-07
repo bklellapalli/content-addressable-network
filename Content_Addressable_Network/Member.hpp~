@@ -24,6 +24,7 @@ class Member
     public:
         std::string self_identifier;
         Address self_address;
+        Address send_to_address;
         bool inited;
         bool inGroup;
         bool bFailed;

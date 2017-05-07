@@ -26,7 +26,7 @@ class Address
 		bool operator ==(const Address &anotherAddress);
         std::string to_string();
         std::string port_to_string();
-        void init(std::string, short);
+        void init();
 };
 
 /**

@@ -61,24 +61,12 @@ std::string Address::port_to_string()
     return ss.str();
 }
 
-void Address::init(std::string addr, short port)
+void Address::init()
 {
-	char *token;
-	char* ipArr = const_cast<char*>(addr.c_str());
-	
-    token = std::strtok(ipArr, ".");
-    std::memcpy(&addrA, token, sizeof(char));
-    
-    token = strtok(NULL, ".");
-    std::memcpy(&addrB, token, sizeof(char));
-    
-    token = strtok(NULL, ".");
-    std::memcpy(&addrC, token, sizeof(char));
-    
-    token = strtok(NULL, ".");
-    std::memcpy(&addrD, token, sizeof(char));
-	
-	this->port = port;    
+    std::memset(&addrA, 0, sizeof(addrA));
+    std::memset(&addrA, 0, sizeof(addrB));
+    std::memset(&addrA, 0, sizeof(addrC));
+    std::memset(&addrA, 0, sizeof(addrD));
 }
 
 /**
