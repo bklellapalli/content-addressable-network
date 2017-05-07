@@ -82,7 +82,7 @@ void Node::recv()
             
                     // Send join reply message
                     send_to_address =  addr;
-                    pushMessage(JOINREP);
+                    pushMessage(JOINREP, new_zone);
                     
                     MemberListEntry entry(addr, new_zone);
                     memberList.push_back(entry);
@@ -111,9 +111,72 @@ void Node::recv()
             break;
                 
             case JOINREP:
+            {
+                short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
+                memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                  sizeof(short)), sizeof(short));
+                memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                              sizeof(short) * 2), sizeof(short));
+                
+                memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 3), sizeof(short));
+                memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 4), sizeof(short));
+                
+                memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 5), sizeof(short));
+                memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 6), sizeof(short));
+                
+                memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 7), sizeof(short));
+                memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                                   sizeof(short) * 8), sizeof(short));
+                
+                boost::geometry::assign_values(self_zone.p1, p1_x, p1_y);
+                boost::geometry::assign_values(self_zone.p2, p2_x, p2_y);
+                boost::geometry::assign_values(self_zone.p3, p3_x, p3_y);
+                boost::geometry::assign_values(self_zone.p4, p4_x, p4_y);
+                
+                getMemberList(memberList, data);
+            }
                 break;
                 
-        	case LEAVEREQ:
+            case LEAVEREQ:
+            {
+                short p1_x, p1_y, p2_x, p2_y, p3_x, p3_y, p4_x, p4_y;
+                memcpy(&p1_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short)), sizeof(short));
+                memcpy(&p1_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 2), sizeof(short));
+                
+                memcpy(&p2_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 3), sizeof(short));
+                memcpy(&p2_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 4), sizeof(short));
+                
+                memcpy(&p3_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 5), sizeof(short));
+                memcpy(&p3_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 6), sizeof(short));
+                
+                memcpy(&p4_x, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 7), sizeof(short));
+                memcpy(&p4_y, (short*)(data + sizeof(MessageHdr) + sizeof(char) * 4 +
+                                       sizeof(short) * 8), sizeof(short));
+                
+                Zone newZone;
+                boost::geometry::assign_values(newZone.p1, p1_x, p1_y);
+                boost::geometry::assign_values(newZone.p2, p2_x, p2_y);
+                boost::geometry::assign_values(newZone.p3, p3_x, p3_y);
+                boost::geometry::assign_values(newZone.p4, p4_x, p4_y);
+                
+                //Merge Zone
+                self_zone.mergeZone(newZone);
+                
+                // update membership list
+                getMemberList(memberList, data);
+            }
                 break;
 		    
             case SEARCHFILE:
@@ -122,7 +185,7 @@ void Node::recv()
             case SENDFILE:
                 break;
 		    
-            case VIEWREQ:
+            default:
                 break;
 		}
 	}
@@ -167,14 +230,19 @@ size_t Node::size_of_message(MsgType type)
     {
         msgsize += (2 * sizeof(short));
     }
-    if(type == HEARTBEAT || type == JOINREP)
+    if(type == HEARTBEAT)
     {
-    	msgsize += sizeof(int)/*number of entrie in member_list*/ + sizeof(MemberListEntry) * memberList.size();
+    	msgsize += sizeof(short)/*number of entrie in member_list*/ + sizeof(MemberListEntry) * memberList.size();
+    }
+    if(type == JOINREP)
+    {
+        msgsize += sizeof(short) * 8;
+        msgsize += sizeof(short) + sizeof(MemberListEntry) * memberList.size();
     }
     return msgsize;
 }
 
-void Node::pushMessage(MsgType type)
+void Node::pushMessage(MsgType type, Zone zone)
 {
     MessageHdr* header = (MessageHdr *) malloc(sizeof(MessageHdr) * sizeof(char));
     size_t size = size_of_message(type);
@@ -191,16 +259,33 @@ void Node::pushMessage(MsgType type)
     
     if(type == JOINREQ)
     {
-        short xValue = point.x();
-		short yValue = point.y();
-        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &xValue, sizeof(short));
-        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &yValue, sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &point.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &point.y(), sizeof(short));
     }
-    if(type == JOINREP)
+    if(type == JOINREP || type == LEAVEREQ)
     {
-        int size_membership_list = memberList.size();
-        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &size_membership_list, sizeof(int));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short)), &zone.p1.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 2), &zone.p1.y(), sizeof(short));
+
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 3), &zone.p2.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 4), &zone.p2.y(), sizeof(short));
+        
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 5), &zone.p3.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 6), &zone.p3.y(), sizeof(short));
+
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 7), &zone.p4.x(), sizeof(short));
+        memcpy((char*)(ptr + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 8), &zone.p4.y(), sizeof(short));
+
+        short size_membership_list = memberList.size();
+        memcpy((char*)(ptr +sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) * 9), &size_membership_list, sizeof(short));
         fillMemberShipList((char *)ptr);
+    }
+    if(type == LEAVEREQ)
+    {
+        memberList.erase(std::remove_if(memberList.begin(), memberList.end(),[this](MemberListEntry entry)
+                                    {
+                                        return !self_zone.canMergeZone(entry.getZone());
+                                    }), memberList.end());
     }
     q_elt element(ptr, (int)size);
     sndMsgsQ->push(element);
@@ -222,9 +307,10 @@ void Node::displayInfo()
 
 void Node::accept_user_input()
 {
+    Zone zone;
     char ipAddress[16];
     short port = 0;
-    int option = 0;
+    short option = 0;
     
     while(true)
     {
@@ -263,12 +349,20 @@ void Node::accept_user_input()
                 memcpy(&send_to_address.addrD, token, sizeof(char));
                 
                 memcpy(&send_to_address.port, &port, sizeof(short));
-                pushMessage(JOINREQ);
+                pushMessage(JOINREQ, zone);
                 inGroup = true;
                 break;
             case 2:
-                pushMessage(LEAVEREQ);
+            {
+                if(inGroup)
+                {
+                    std::cout << "\n******* Disconnected ********\n" << std::endl;
+                    break;
+                }
+                pushMessage(LEAVEREQ, self_zone);
                 inGroup = false;
+                std::cout << "\n******* Disconnected ********\n" << std::endl;
+            }
                 break;
             case 3:
                 displayInfo();
@@ -279,10 +373,11 @@ void Node::accept_user_input()
 
 void Node::getMemberList(std::vector<MemberListEntry>& memberList, char* data, bool flag) 
 {
-	char* ptr = data + sizeof(MessageHdr) + sizeof(int);
+	char* ptr = data + sizeof(MessageHdr) + sizeof(char) * 4 + sizeof(short) + sizeof(short) * 8;
 	//number of entries in data
-	int size = 0;
-	memcpy(&size, data + sizeof(MessageHdr) + sizeof(4), sizeof(int));
+	short size = 0;
+	memcpy(&size, (short *)ptr , sizeof(short));
+    ptr += sizeof(short);
 	for(int i = 0; i < size; ++i) {
 		MemberListEntry entry;
 		memcpy(&entry.getAddress().addrA, (char*)(ptr), sizeof(char));
@@ -424,18 +519,23 @@ void Node::fillMemberShipList(char* msg)
 			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short)), &entry.heartbeat, sizeof(long));
 			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long)), &entry.timestamp, sizeof(long long));
 			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long)),
-                   &entry.zone.p1.x(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int)),
-                   &entry.zone.p1.y(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 2),
-                   &entry.zone.p2.x(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 3), &entry.zone.p2.y(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 4), &entry.zone.p3.x(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 5), &entry.zone.p3.y(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 6), &entry.zone.p4.x(), sizeof(int));
-			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 7), &entry.zone.p4.y(), sizeof(int));
+                   &entry.zone.p1.x(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short)), &entry.zone.p1.y(), sizeof(int));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 2), &entry.zone.p2.x(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 3), &entry.zone.p2.y(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 4), &entry.zone.p3.x(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 5), &entry.zone.p3.y(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 6), &entry.zone.p4.x(), sizeof(short));
+			memcpy((char* )(mem + sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) +
+                            sizeof(short) * 7), &entry.zone.p4.y(), sizeof(short));
 			
-			mem += sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(int) * 8;
+			mem += sizeof(char) * 4 + sizeof(short) + sizeof(long) + sizeof(long long) + sizeof(short) * 8;
 		}
 	}
 }

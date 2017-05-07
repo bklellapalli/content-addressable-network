@@ -107,3 +107,35 @@ short Zone::minDistance(boost::geometry::model::d2::point_xy<short> pt)
     short d4 = boost::geometry::distance(p4, pt);
     return std::min(d1, std::min(d2, std::min(d3, d4)));
 }
+
+bool Zone::canMergeZone(Zone zone)
+{
+    return ( (boost::geometry::equals(p1, zone.p4) && boost::geometry::equals(p2, zone.p3)) ||
+             (boost::geometry::equals(p2, zone.p1) && boost::geometry::equals(p3, zone.p4)) ||
+              (boost::geometry::equals(p3, zone.p2) && boost::geometry::equals(p4, zone.p1)) ||
+               (boost::geometry::equals(p4, zone.p3) && boost::geometry::equals(p1, zone.p2)) );
+}
+
+void Zone::mergeZone(Zone zone)
+{
+    if (boost::geometry::equals(p1, zone.p4) && boost::geometry::equals(p2, zone.p3))
+    {
+        boost::geometry::assign_values(p1, zone.p1.x(), zone.p1.y());
+        boost::geometry::assign_values(p2, zone.p2.x(), zone.p2.y());
+    }
+    else if (boost::geometry::equals(p2, zone.p1) && boost::geometry::equals(p3, zone.p4))
+    {
+        boost::geometry::assign_values(p2, zone.p2.x(), zone.p2.y());
+        boost::geometry::assign_values(p3, zone.p3.x(), zone.p3.y());
+    }
+    else if (boost::geometry::equals(p3, zone.p2) && boost::geometry::equals(p4, zone.p1))
+    {
+        boost::geometry::assign_values(p3, zone.p3.x(), zone.p3.y());
+        boost::geometry::assign_values(p4, zone.p4.x(), zone.p4.y());
+    }
+    else if (boost::geometry::equals(p4, zone.p3) && boost::geometry::equals(p1, zone.p2))
+    {
+        boost::geometry::assign_values(p4, zone.p4.x(), zone.p4.y());
+        boost::geometry::assign_values(p1, zone.p1.x(), zone.p1.y());
+    }
+}

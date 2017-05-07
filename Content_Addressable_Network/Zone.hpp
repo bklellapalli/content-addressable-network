@@ -23,6 +23,8 @@ class Zone
         bool isCoordinateInZone(boost_geometry::point_xy<short> point);
         short minDistance(boost_geometry::point_xy<short> pt);
         bool is_share_axis(Zone zone);
+        bool canMergeZone(Zone zone);
+        void mergeZone(Zone zone);
     
     private:
         bool is_share_x_axis(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,

@@ -25,7 +25,7 @@ class Node : public Member
 		//thread function
 		void init_mem_protocol(void);	
 		void accept_user_input(void);
-        void pushMessage(MsgType type);
+        void pushMessage(MsgType type, Zone zone);
         void recv(void);
 		void sendLoop(void);
 		
