@@ -6,9 +6,9 @@
 
 enum MsgType
 {
-    HEARTBEAT = 0,
+    JOINREP = 0,
+    HEARTBEAT,
     JOINREQ,
-    JOINREP,
     LEAVEREQ,
     VIEWREQ,
     SENDFILE,

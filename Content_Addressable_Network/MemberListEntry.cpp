@@ -88,10 +88,10 @@ MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timest
  */
 MemberListEntry::MemberListEntry(Address& addr): address(addr) { }
 
-MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(zone) { }
+MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(std::move(zone)) { }
 
 MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp, Zone zone)
-	: address(addr), heartbeat(heartbeat), timestamp(timestamp), zone(zone) { }
+	: address(std::move(addr)), heartbeat(std::move(heartbeat)), timestamp(std::move(timestamp)), zone(std::move(zone)) { }
 
 /**
  * Copy constructor

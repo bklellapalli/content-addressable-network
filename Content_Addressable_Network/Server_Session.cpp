@@ -10,12 +10,9 @@
 
 #include "Server_Session.hpp"
 #include "Logger.hpp"
-#include <iostream>
-
 
 Server_Session::Server_Session(tcp::socket socket) : socket_(std::move(socket)) 
 {
-	LOG_TRACE << "Session started"; 
 }
 
 Server_Session::~Server_Session() { }
@@ -35,7 +32,8 @@ void Server_Session::do_read(std::queue<q_elt>* mesQ)
         {
         	std::string data;
         	std::copy(buf.begin(), buf.begin() + bytes_transferred, std::back_inserter(data));
-            mesQ->emplace(data, bytes_transferred);
+            q_elt el(data, bytes_transferred);
+            mesQ->push(el);
         }
         do_read(mesQ);
 	});

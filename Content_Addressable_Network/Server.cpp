@@ -15,7 +15,6 @@
 Server::Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>* mesQ) 
 	: endpoint{tcp::v4(), static_cast<unsigned short>(port)}, acc{io_service, endpoint}, socket{io_service}
 {
-	LOG_TRACE << "Server running";
 	run(mesQ);
 }
 
