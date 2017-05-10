@@ -50,8 +50,8 @@ bool Address::operator ==(const Address& anotherAddress)
 
 std::string Address::to_string()
 {
-    return std::string(std::string(1, addrA) + "." + std::string(1, addrB) + "." +
-                       std::string(1, addrC) + "." + std::string(1, addrD));
+	return std::string(std::string(std::to_string(int(addrA))) + "." + std::string(std::to_string(int(addrB))) + "." +
+                       std::string(std::to_string(int(addrC))) + "." + std::string(std::to_string(int(addrD))));
 }
 
 std::string Address::port_to_string()
@@ -65,19 +65,15 @@ void Address::init(std::string addr, short port)
 {
 	char *token;
 	char* ipArr = const_cast<char*>(addr.c_str());
-	
+	//std::cout << "DEBUG " << ipArr << std::endl;
     token = std::strtok(ipArr, ".");
-    std::memcpy(&addrA, token, sizeof(char));
-    
+    addrA = atoi(token);
     token = strtok(NULL, ".");
-    std::memcpy(&addrB, token, sizeof(char));
-    
+    addrB = atoi(token);
     token = strtok(NULL, ".");
-    std::memcpy(&addrC, token, sizeof(char));
-    
+    addrC = atoi(token);
     token = strtok(NULL, ".");
-    std::memcpy(&addrD, token, sizeof(char));
-	
+    addrD = atoi(token);
 	this->port = port;    
 }
 
@@ -92,10 +88,10 @@ MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timest
  */
 MemberListEntry::MemberListEntry(Address& addr): address(addr) { }
 
-MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(zone) { }
+MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(std::move(zone)) { }
 
 MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp, Zone zone)
-	: address(addr), heartbeat(heartbeat), timestamp(timestamp), zone(zone) { }
+	: address(std::move(addr)), heartbeat(std::move(heartbeat)), timestamp(std::move(timestamp)), zone(std::move(zone)) { }
 
 /**
  * Copy constructor

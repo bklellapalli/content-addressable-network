@@ -9,7 +9,9 @@
  **********************************/
 
 #include "Client.hpp"
+#include "Logger.hpp"
 #include <boost/array.hpp>
+#include <string>
 using boost::asio::ip::tcp;
 
 Client::Client(boost::asio::io_service& io_service, std::string& connectToAddr, std::string& connectToPort) :
@@ -18,10 +20,9 @@ Client::Client(boost::asio::io_service& io_service, std::string& connectToAddr, 
 	resolve(connectToAddr, connectToPort);
 }
 
-void Client::write(char* data)
+void Client::write(std::string buf)
 {
 	boost::system::error_code err;
-	std::string buf(data);
 	boost::asio::write(socket, boost::asio::buffer(buf), boost::asio::transfer_all(), err);
 }
 

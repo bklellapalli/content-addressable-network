@@ -15,7 +15,7 @@ namespace boost_geometry = boost::geometry::model::d2;
 class Address
 {
     public:
-        char addrA, addrB, addrC, addrD;
+        unsigned char addrA, addrB, addrC, addrD;
         short port;
     
     public:

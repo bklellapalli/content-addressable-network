@@ -36,8 +36,7 @@ class Member
         Zone self_zone;
     
 		std::vector<MemberListEntry> memberList;
-        std::vector<MemberListEntry>::iterator myPos;
-	
+    
     public:
         Member();
 		Member(const Member &anotherMember) = delete;

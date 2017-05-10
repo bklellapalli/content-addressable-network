@@ -2,12 +2,13 @@
 #define Message_hpp
 
 #include <cstddef>
+#include <string>
 
 enum MsgType
 {
+    JOINREP = 0,
     HEARTBEAT,
     JOINREQ,
-    JOINREP,
     LEAVEREQ,
     VIEWREQ,
     SENDFILE,
@@ -30,16 +31,15 @@ typedef struct MessageHdr
 class q_elt 
 {
 	public:
-		char *elt;
+		std::string data;
 		size_t size;
 		
-        q_elt(void* buf, size_t len)
+        q_elt(std::string buf, size_t len) : data(std::move(buf)), size(len)
 		{
-			elt = (char*)buf;
-			size = len;
+			
 		}
     
-		inline void* getElement(void) { return elt; }
+		inline std::string getElement(void) { return data; }
 		inline int getSize() { return (int)size; }
 };
 

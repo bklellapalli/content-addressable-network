@@ -4,12 +4,12 @@
 #include "Server.hpp"
 #include "Member.hpp"
 #include "Message.hpp"
-#include "Message.hpp"
+#include "Logger.hpp"
 #include <boost/asio.hpp>
 #include <utility>
 
-#define TREMOVE 50
-#define TFAIL 10
+#define TREMOVE 50000
+#define TFAIL 10000
 
 namespace boost_geometry = boost::geometry::model::d2;
 
@@ -32,7 +32,7 @@ class Node : public Member
 		void sendLoop(void);
 		
 	private:
-		void getMemberList(std::vector<MemberListEntry>&, char*, bool = false);
+		void getMemberList(char*);
 		//bool isNodeRemoved(Address& addr, int port);
 		void insertEntry(std::vector<MemberListEntry>& memberList, Address& address, long heartbeat, long long timestamp);
 		size_t size_of_message(MsgType type);

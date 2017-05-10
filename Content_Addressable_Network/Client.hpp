@@ -16,7 +16,7 @@ class Client
 	
     public:
 		Client(boost::asio::io_service& io_service, std::string& connectToAddr, std::string& connectToPort);
-		void write(char* data);
+		void write(std::string);
 	
     private:
 		void resolve(std::string& connectToAddr, std::string& connectToPort);
