@@ -24,19 +24,18 @@ class Node : public Member
 		Node(boost::asio::io_service& io_service, int port); 
 		~Node();
 
-		//thread function
+		//thread functions
 		void init_mem_protocol(void);	
 		void accept_user_input(void);
-        void pushMessage(MsgType type, Zone,  std::string = "", std::string = "");
+        void pushMessage(MsgType type, Zone&,  std::string = "", std::string = "");
         void recv(void);
 		void sendLoop(void);
 		
 	private:
 		void getMemberList(char*);
-		//bool isNodeRemoved(Address& addr, int port);
 		void insertEntry(std::vector<MemberListEntry>& memberList, Address& address, long heartbeat, long long timestamp);
 		size_t size_of_message(MsgType type);
-        void displayInfo(void);
+        void displayInfo(Address& addr, std::vector<MemberListEntry>& member_list);
         short getRandomReceivers(void);
         void fillMemberShipList(char* msg);
 };

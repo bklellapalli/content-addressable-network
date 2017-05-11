@@ -12,6 +12,7 @@
 #include "Logger.hpp"
 #include <boost/array.hpp>
 #include <string>
+
 using boost::asio::ip::tcp;
 
 Client::Client(boost::asio::io_service& io_service, std::string& connectToAddr, std::string& connectToPort) :

@@ -23,65 +23,52 @@
  * Constructor
  */
 
-short Member::generateRandomNumber()
+Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0), pingCounter(0), timeOutCounter(0)
 {
     std::time_t now = std::time(0);
     boost::random::mt19937 gen{static_cast<std::uint32_t>(now)};
     boost::random::uniform_int_distribution<> dist{MIN_COORDINATE, MAX_COORDINATE};
-    return dist(gen);
-}
-
-Member::Member(): inited(false), inGroup(false), bFailed(false), nnb(0), heartbeat(0), pingCounter(0), timeOutCounter(0)
-{
-    short x_axis = generateRandomNumber();
-    short y_axis = generateRandomNumber();
+    short x_axis = dist(gen);
+    short y_axis = dist(gen);
     boost::geometry::assign_values(point, x_axis, y_axis);
-    
 }
 /*
  * Destructor
  */
-Member::~Member()
-{
-    
-}
+Member::~Member() { }
 
-bool Member::isNeighbour(MemberListEntry entry)
+bool Member::isNeighbour(Zone zone)
 {
-    return self_zone.is_share_axis(entry.getZone());
+    return self_zone.is_share_axis(zone);
 }
 
 std::string Member::getLocalIpAddress()
 {
-	struct ifaddrs * ifAddrStruct=NULL;
-    struct ifaddrs * ifa=NULL;
-    void * tmpAddrPtr=NULL;
+	struct ifaddrs * ifAddrStruct = NULL;
+    struct ifaddrs * ifa = NULL;
+    void * tmpAddrPtr = NULL;
 
     getifaddrs(&ifAddrStruct);
 
     for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) 
     {
-        if (!ifa->ifa_addr) 
-        {
-            continue;
-        }
+        if (!ifa->ifa_addr) continue;
         if (ifa->ifa_addr->sa_family == AF_INET) // check it is IP4
         {    
             // is a valid IP4 Address
-            tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+            tmpAddrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
             char addressBuffer[INET_ADDRSTRLEN];
             inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
             std::string addrBuf(addressBuffer);
             
             if(addrBuf.compare("127.0.0.1") != 0 && addrBuf.compare("1.1.1.1") != 0) 
             {
-            	//std::cout << "Debug " << addrBuf << std::endl;
-            	if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+                if (ifAddrStruct != NULL) { freeifaddrs(ifAddrStruct); }
             	return addrBuf;
             }
         }
     }
-    if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+    if (ifAddrStruct != NULL) { freeifaddrs(ifAddrStruct); }
     return std::string("");
 }
 

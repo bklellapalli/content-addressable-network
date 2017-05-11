@@ -65,7 +65,6 @@ void Address::init(std::string addr, short port)
 {
 	char *token;
 	char* ipArr = const_cast<char*>(addr.c_str());
-	//std::cout << "DEBUG " << ipArr << std::endl;
     token = std::strtok(ipArr, ".");
     addrA = atoi(token);
     token = strtok(NULL, ".");
@@ -88,9 +87,9 @@ MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timest
  */
 MemberListEntry::MemberListEntry(Address& addr): address(addr) { }
 
-MemberListEntry::MemberListEntry(Address& addr, Zone zone) : address(addr), zone(std::move(zone)) { }
+MemberListEntry::MemberListEntry(Address& addr, Zone& zone) : address(addr), zone(std::move(zone)) { }
 
-MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp, Zone zone)
+MemberListEntry::MemberListEntry(Address& addr, long heartbeat, long long timestamp, Zone& zone)
 	: address(std::move(addr)), heartbeat(std::move(heartbeat)), timestamp(std::move(timestamp)), zone(std::move(zone)) { }
 
 /**
@@ -101,6 +100,7 @@ MemberListEntry::MemberListEntry(const MemberListEntry &anotherMLE)
     this->heartbeat = anotherMLE.heartbeat;
     this->address = anotherMLE.address;
     this->timestamp = anotherMLE.timestamp;
+    this->zone = anotherMLE.zone;
 }
 
 /**
@@ -112,51 +112,28 @@ MemberListEntry& MemberListEntry::operator =(const MemberListEntry &anotherMLE)
     std::swap(heartbeat, temp.heartbeat);
     std::swap(address, temp.address);
     std::swap(timestamp, temp.timestamp);
+    std::swap(zone, temp.zone);
     return *this;
 }
 
-Address& MemberListEntry::getAddress()
-{
-    return address;
-}
+Address& MemberListEntry::getAddress() { return address; }
 
-long MemberListEntry::getheartbeat()
-{
-    return heartbeat;
-}
+long MemberListEntry::getheartbeat() { return heartbeat; }
 
-long long MemberListEntry::gettimestamp()
-{
-    return timestamp;
-}
+long long MemberListEntry::gettimestamp() { return timestamp; }
 
-Zone MemberListEntry::getZone()
-{
-    return zone;
-}
+Zone MemberListEntry::getZone() { return zone; }
 
-void MemberListEntry::setAddress(Address& addr)
-{
-    this->address = addr;
-}
+void MemberListEntry::setAddress(Address& addr) { this->address = addr; }
 
-void MemberListEntry::setheartbeat(long hearbeat)
-{
-    this->heartbeat = hearbeat;
-}
+void MemberListEntry::setheartbeat(long hearbeat) { this->heartbeat = hearbeat; }
 
-void MemberListEntry::settimestamp(long long timestamp)
-{
-    this->timestamp = timestamp;
-}
+void MemberListEntry::settimestamp(long long timestamp) { this->timestamp = timestamp; }
+
+short MemberListEntry::findMinDistance(boost_geometry::point_xy<short> pt) { return zone.minDistance(pt); }
 
 void MemberListEntry::setZone(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
                               boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4)
 {
     zone.setZone(c1, c2, c3, c4);
-}
-
-short MemberListEntry::findMinDistance(boost_geometry::point_xy<short> pt)
-{
-    return zone.minDistance(pt);
 }

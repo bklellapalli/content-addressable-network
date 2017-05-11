@@ -6,9 +6,9 @@
 
 enum MsgType
 {
-    JOINREP = 0,
     HEARTBEAT,
     JOINREQ,
+    JOINREP,
     LEAVEREQ,
     VIEWREQ,
     SENDFILE,
@@ -34,11 +34,7 @@ class q_elt
 		std::string data;
 		size_t size;
 		
-        q_elt(std::string buf, size_t len) : data(std::move(buf)), size(len)
-		{
-			
-		}
-    
+        q_elt(std::string buf, size_t len) : data(std::move(buf)), size(len) { }
 		inline std::string getElement(void) { return data; }
 		inline int getSize() { return (int)size; }
 };

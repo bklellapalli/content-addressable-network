@@ -14,7 +14,6 @@
 #include <fstream>
 #include <ostream>
 
-
 namespace logging = boost::log;
 namespace src = boost::log::sources;
 namespace expr = boost::log::expressions;
@@ -60,13 +59,3 @@ BOOST_LOG_GLOBAL_LOGGER_INIT(logger, src::severity_logger_mt) {
 
     return logger;
 }
-
-/*int main()
-{
-	LOG_TRACE << "this is a trace message";
-  LOG_DEBUG << "this is a debug message";
-  LOG_WARNING << "this is a warning message";
-  LOG_ERROR << "this is an error message";
-LOG_FATAL << "this is a fatal error message";
-	return 0;
-}*/

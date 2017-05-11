@@ -39,4 +39,4 @@ void Server_Session::do_read(std::queue<q_elt>* mesQ)
 	});
 }
 
-void Server_Session::do_write(std::size_t length) { }
+//void Server_Session::do_write(std::size_t length) { }

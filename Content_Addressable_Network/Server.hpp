@@ -1,10 +1,10 @@
 #ifndef Server_hpp
 #define Server_hpp
 
-#include <queue>
-#include <boost/asio.hpp>
 #include "Server_Session.hpp"
 #include "Message.hpp"
+#include <queue>
+#include <boost/asio.hpp>
 
 using boost::asio::ip::tcp;
 

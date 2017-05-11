@@ -1,9 +1,8 @@
-
 #ifndef MEMBERLISTENTRY_HPP
 #define MEMBERLISTENTRY_HPP
 
-#include <string>
 #include "Zone.hpp"
+#include <string>
 
 namespace boost_geometry = boost::geometry::model::d2;
 
@@ -48,9 +47,9 @@ class MemberListEntry
     public:
         MemberListEntry(Address&, long, long long);
         MemberListEntry(Address&);
-        MemberListEntry(Address&, Zone zone);
-        MemberListEntry(Address&, long, long long, Zone zone);
-        MemberListEntry(): heartbeat(0), timestamp(0) {}
+        MemberListEntry(Address&, Zone& zone);
+        MemberListEntry(Address&, long, long long, Zone& zone);
+        MemberListEntry(): heartbeat(0), timestamp(0) { }
         MemberListEntry(const MemberListEntry &anotherMLE);
         MemberListEntry& operator =(const MemberListEntry&);
     
@@ -58,12 +57,11 @@ class MemberListEntry
         long getheartbeat();
         long long gettimestamp();
         Zone getZone();
-    
         void setAddress(Address&);
         void setheartbeat(long hearbeat);
         void settimestamp(long long timestamp);
     	void setZone(boost_geometry::point_xy<short> c1, boost_geometry::point_xy<short> c2,
-                            boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4);
+                     boost_geometry::point_xy<short> c3, boost_geometry::point_xy<short> c4);
 		
 		short findMinDistance(boost_geometry::point_xy<short> pt);
 };

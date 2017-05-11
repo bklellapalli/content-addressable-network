@@ -18,10 +18,7 @@ Server::Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>*
 	run(mesQ);
 }
 
-Server::~Server()
-{
- 	socket.close();   
-}
+Server::~Server() { socket.close(); }
 
 void Server::run(std::queue<q_elt>* mesQ)
 {
