@@ -8,14 +8,18 @@
 
 CFLAGS = -Wall -Wextra -std=c++11
 
-DLLS = -lboost_system-mt -lboost_thread-mt -lboost_chrono-mt -lpthread
+DLLS = -lboost_system-mt -lboost_thread-mt -lboost_chrono-mt -lpthread 
+
+MONGO_DLL = -lmongoc-1.0 -lbson-1.0
+
+MONGO_HEADER = -I/usr/local/include/libmongoc-1.0 -I/usr/local/include/libbson-1.0
 
 LOG_DLLS = -DBOOST_LOG_DYN_LINK -lboost_log-mt
 
 all: can_server
 
-can_server: zone.o memberlistentry.o member.o logger.o server_session.o server.o client.o
-	g++ zone.o server_session.o server.o memberlistentry.o member.o client.o logger.o Node.cpp -o server ${DLLS} ${LOG_DLLS} ${CFLAGS}
+can_server: zone.o memberlistentry.o member.o logger.o server_session.o server.o client.o file_processor.o
+	g++ zone.o server_session.o server.o memberlistentry.o member.o client.o logger.o file_processor.o Node.cpp -o server ${MONGO_DLL} ${DLLS} ${LOG_DLLS} ${CFLAGS}
 
 server_session.o: Server_Session.cpp Message.hpp
 	g++ Server_Session.cpp -c -o server_session.o ${CFLAGS}
@@ -37,7 +41,11 @@ zone.o: Zone.cpp Zone.hpp
 	
 logger.o: Logger.cpp Logger.hpp
 	g++ Logger.cpp -c -o logger.o ${CFLAGS}
-	
+
+
+file_processor.o: FileProcessor.cpp FileProcessor.hpp
+	g++ FileProcessor.cpp -c -o file_processor.o ${MONGO_HEADER} ${MONGO_DLL}
+
 clean:
 	rm *.o
 	rm server

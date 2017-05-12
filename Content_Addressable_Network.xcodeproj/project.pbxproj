@@ -15,6 +15,7 @@
 		AC36E3C31EB88C8F0037E3DB /* Client.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC36E3C21EB88C8F0037E3DB /* Client.cpp */; };
 		AC3887201EBAE4FC0075531F /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC38871E1EBAE4FC0075531F /* Logger.cpp */; };
 		AC3A66991EBBDF2200CE81E7 /* Zone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC3A66981EBBDF2200CE81E7 /* Zone.cpp */; };
+		AC7765441EC5353800147FA8 /* FileProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AC7765421EC5353800147FA8 /* FileProcessor.cpp */; };
 		ACD5A6DE1EC325D600D92B84 /* libboost_chrono-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD5A6DA1EC325D600D92B84 /* libboost_chrono-mt.dylib */; };
 		ACD5A6DF1EC325D600D92B84 /* libboost_log-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD5A6DB1EC325D600D92B84 /* libboost_log-mt.dylib */; };
 		ACD5A6E11EC325D600D92B84 /* libboost_thread-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = ACD5A6DD1EC325D600D92B84 /* libboost_thread-mt.dylib */; };
@@ -52,6 +53,8 @@
 		AC38871E1EBAE4FC0075531F /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
 		AC38871F1EBAE4FC0075531F /* Logger.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Logger.hpp; sourceTree = "<group>"; };
 		AC3A66981EBBDF2200CE81E7 /* Zone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Zone.cpp; sourceTree = "<group>"; };
+		AC7765421EC5353800147FA8 /* FileProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileProcessor.cpp; sourceTree = "<group>"; };
+		AC7765431EC5353800147FA8 /* FileProcessor.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = FileProcessor.hpp; sourceTree = "<group>"; };
 		ACD5A6DA1EC325D600D92B84 /* libboost_chrono-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_chrono-mt.dylib"; path = "../../../../../opt/local/lib/libboost_chrono-mt.dylib"; sourceTree = "<group>"; };
 		ACD5A6DB1EC325D600D92B84 /* libboost_log-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_log-mt.dylib"; path = "../../../../../opt/local/lib/libboost_log-mt.dylib"; sourceTree = "<group>"; };
 		ACD5A6DD1EC325D600D92B84 /* libboost_thread-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_thread-mt.dylib"; path = "../../../../../opt/local/lib/libboost_thread-mt.dylib"; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 				AC36E3BF1EB819B90037E3DB /* MemberListEntry.hpp */,
 				AC36E3C01EB81AD40037E3DB /* Member.cpp */,
 				AC36E3C21EB88C8F0037E3DB /* Client.cpp */,
+				AC7765421EC5353800147FA8 /* FileProcessor.cpp */,
+				AC7765431EC5353800147FA8 /* FileProcessor.hpp */,
 			);
 			path = Content_Addressable_Network;
 			sourceTree = "<group>";
@@ -181,6 +186,7 @@
 				AC36E3C31EB88C8F0037E3DB /* Client.cpp in Sources */,
 				AC2FA81F1EB7F616002DDEB8 /* Server.cpp in Sources */,
 				AC2FA81D1EB7F616002DDEB8 /* Node.cpp in Sources */,
+				AC7765441EC5353800147FA8 /* FileProcessor.cpp in Sources */,
 				AC36E3C11EB81AD40037E3DB /* Member.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
