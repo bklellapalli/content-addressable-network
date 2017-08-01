@@ -2,7 +2,7 @@
 #define SERVER_SESSION_HPP
 
 #include "Message.hpp"
-#include <queue>
+#include "SharedQueue.hpp"
 #include <boost/asio.hpp>
 #include <boost/array.hpp>
 
@@ -18,10 +18,10 @@ class Server_Session : public std::enable_shared_from_this<Server_Session>
     public:
 	  	Server_Session(tcp::socket socket);
 	  	~Server_Session();
-	  	void start(std::queue<q_elt>* mesQ);
+	  	void start(SharedQueue<q_elt>* mesQ);
     
     private:
-        void do_read(std::queue<q_elt>* mesQ);
+        void do_read(SharedQueue<q_elt>* mesQ);
 };
 
 #endif /* SERVER_SESSION_HPP */

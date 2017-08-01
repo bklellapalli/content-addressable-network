@@ -5,6 +5,8 @@
 #include "Member.hpp"
 #include "Message.hpp"
 #include "Logger.hpp"
+#include "FileProcessor.hpp"
+#include "SharedQueue.hpp"
 #include <boost/asio.hpp>
 #include <utility>
 
@@ -17,8 +19,8 @@ class Node : public Member
 {
 	private:
 		Server* server;
-		std::queue<std::pair<std::pair<std::string, std::string>, q_elt>>* sndMsgsQ;
-		std::queue<q_elt>* rcvMsgsQ;
+		SharedQueue<std::pair<std::pair<std::string, std::string>, q_elt>>* sndMsgsQ;
+		SharedQueue<q_elt>* rcvMsgsQ;
 		
 	public:
 		Node(boost::asio::io_service& io_service, int port); 

@@ -5,7 +5,6 @@
 #include "Zone.hpp"
 #include <boost/geometry/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
-#include <queue>
 #include <string>
 
 #define MIN_COORDINATE 1

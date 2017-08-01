@@ -17,12 +17,12 @@ Server_Session::Server_Session(tcp::socket socket) : socket_(std::move(socket))
 
 Server_Session::~Server_Session() { }
 
-void Server_Session::start(std::queue<q_elt>* mesQ)
+void Server_Session::start(SharedQueue<q_elt>* mesQ)
 {
     do_read(mesQ);
 }
 
-void Server_Session::do_read(std::queue<q_elt>* mesQ)
+void Server_Session::do_read(SharedQueue<q_elt>* mesQ)
 {
     auto self(shared_from_this());
     socket_.async_read_some(boost::asio::buffer(buf, max_length),
@@ -33,10 +33,11 @@ void Server_Session::do_read(std::queue<q_elt>* mesQ)
         	std::string data;
         	std::copy(buf.begin(), buf.begin() + bytes_transferred, std::back_inserter(data));
             q_elt el(data, bytes_transferred);
-            mesQ->push(el);
+            mesQ->push_back(el);
         }
         do_read(mesQ);
 	});
 }
+
 
 //void Server_Session::do_write(std::size_t length) { }

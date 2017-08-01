@@ -3,7 +3,7 @@
 
 #include "Server_Session.hpp"
 #include "Message.hpp"
-#include <queue>
+#include "SharedQueue.hpp"
 #include <boost/asio.hpp>
 
 using boost::asio::ip::tcp;
@@ -16,12 +16,12 @@ class Server
 		tcp::socket socket;
 		
 	public:
-		Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>* mesQ);
+		Server(boost::asio::io_service& io_service, int port, SharedQueue<q_elt>* mesQ);
 		Server(Server&) = delete;
 		virtual ~Server(void);
 		
 	private:
-		void run(std::queue<q_elt>* mesQ);
+		void run(SharedQueue<q_elt>* mesQ);
 };
 
 #endif /* Server_hpp */

@@ -8,6 +8,9 @@
  **********************************/
 
 #include "FileProcessor.hpp"
+#include "boost/filesystem.hpp"
+#include <iostream>
+#include <iterator>
 
 FileProcessor::FileProcessor(std::string ipAddress, std::string port)
 {
@@ -26,10 +29,27 @@ FileProcessor::FileProcessor(std::string ipAddress, std::string port)
 
 FileProcessor::~FileProcessor()
 {
-    mongoc_gridfs_destroy (gridfs);
-    mongoc_client_destroy (client);
-    mongoc_cleanup ();
+    //mongoc_gridfs_destroy (gridfs);
+    //mongoc_client_destroy (client);
+    //mongoc_cleanup ();
 }
+
+void FileProcessor::insertFiles()
+{
+   
+    boost::filesystem::path p("Shared");
+    std::vector<boost::filesystem::directory_entry> v; // To save the file names in a vector.
+    
+    if(boost::filesystem::is_directory(p))
+    {
+        std::copy(boost::filesystem::directory_iterator(p), boost::filesystem::directory_iterator(), std::back_inserter(v));
+        for ( std::vector<boost::filesystem::directory_entry>::const_iterator it = v.begin(); it != v.end();  ++ it )
+        {
+            std::cout<< (*it).path().filename().string()<< std::endl;
+        }
+    }
+}
+
 
 void FileProcessor::readFile(std::string fileName)
 {

@@ -26,6 +26,7 @@ class FileProcessor
 public:
         FileProcessor(std::string ipAddress, std::string port);
         ~FileProcessor();
+        void insertFiles();
         void readFile(std::string fileName);
         void writeFile(std::string fileName);
 };

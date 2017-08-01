@@ -11,8 +11,9 @@
 #include <boost/bind.hpp>
 #include "Server.hpp"
 #include "Logger.hpp"
+#include "SharedQueue.hpp"
 
-Server::Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>* mesQ) 
+Server::Server(boost::asio::io_service& io_service, int port, SharedQueue<q_elt>* mesQ)
 	: endpoint{tcp::v4(), static_cast<unsigned short>(port)}, acc{io_service, endpoint}, socket{io_service}
 {
 	run(mesQ);
@@ -20,7 +21,7 @@ Server::Server(boost::asio::io_service& io_service, int port, std::queue<q_elt>*
 
 Server::~Server() { socket.close(); }
 
-void Server::run(std::queue<q_elt>* mesQ)
+void Server::run(SharedQueue<q_elt>* mesQ)
 {
     acc.async_accept(socket,
      [this, mesQ](boost::system::error_code ec)
