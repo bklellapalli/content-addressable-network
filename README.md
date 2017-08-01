@@ -1,5 +1,4 @@
-# Content_Addressable_Network
-Content Addressable Network (CAN)
+# Content Addressable Network (CAN)
 
 The Content Addressable Network (CAN) is a distributed, decentralized P2P infrastructure that provides hash table functionality. 
 CAN was one of the original four distributed hash table proposals, introduced concurrently with Chord, Pastry, and Tapestry.
@@ -26,7 +25,7 @@ CAN is composed of many individual nodes. Each CAN node stores a zone of entire 
 Node holds information about “adjacent” zones. Requests (insert, lookup, or delete) are routed by intermediate CAN nodes. 
 CAN design is completely distributed, scalable and fault-tolerant.
  
-ROUTING
+# ROUTING
 A CAN node maintains a coordinate routing table that holds the IP address and virtual coordinate zone of each of its 
 immediate neighbors in the coordinate space. Two nodes are neighbors if their coordinate spans overlap. 
 This neighbor state is sufficient to route between two arbitrary points in the space: A CAN message includes the destination
@@ -38,20 +37,20 @@ a node can automatically route along the next best available path.
 If a node loses all its neighbors in a certain direction then greedy forwarding may temporarily fail.
 
 
-NODE JOINING
+# NODE JOINING
 To join CAN, a joining node must:
 1. Find a node already in the overlay network.
 2. Identify a zone that can be split
 3. Update the routing tables of nodes neighboring the newly split zone.
 
 
-Finding a Zone
+# Finding a Zone
 New node randomly chooses a point P and sends a JOIN request destined for point P . 
 This message is sent into the CAN via any existing CAN node. Each CAN node then uses the CAN routing mechanism 
 to forward the message, until it reaches the node in whose zone P lies. This current occupant node then splits its 
 zone in half and assigns one half to the new node.
 
-Joining the Routing
+# Joining the Routing
 Once the node managing the destination point's zone receives the join request, it may honor the join request by 
 splitting its zone in half, allocating itself the first half, and allocating the joining node the second half. 
 If it does not honor the join request, the joining node keeps picking random points in the coordinate space and 
@@ -61,7 +60,7 @@ two new zones and the corresponding IP addresses. Routing tables are updated and
 
 
 
-NODE DEPARTING
+# NODE DEPARTING
 To handle a node departing, CAN must
 1. Identify a node is departing.
 2. Have the departing node's zone merged or taken over by a neighboring node.
